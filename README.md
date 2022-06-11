@@ -20,8 +20,8 @@ Download and install NodeJs from https://nodejs.org/en/download/. Try `npm -v` t
 Inside `/ase-platform/ase-frontend` run `npm install` to install needed packages.
 
 #### 4. Build Project
-To build all project files run `mvn clean install -DskipTests` inside `/aseplatform`. You can skip all Unit Tests, because in this case you only want to build everything.
+To build all project files run `mvn clean install -DskipTests` inside `/ase-platform`. You can skip all Unit Tests, because in this case you only want to build everything.
 
 #### 5. Run application
-For the backend run: `mvn spring-boot:run` inside `/ase-platform/ase-backend`
+For the backend run: `mvn spring-boot:run` inside `/ase-platform/ase-backend`<br>
 For the frontend run `ng serve` inside `/ase-platform/ase-frontend`
