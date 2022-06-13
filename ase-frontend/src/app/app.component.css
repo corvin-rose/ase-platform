@@ -1,0 +1,27 @@
+body {
+  min-height: 100%;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 75px;
+  box-shadow: var(--shadow);
+  padding: 0 48px;
+  margin-bottom: 20px;
+}
+app-search-bar {
+  width: min(50%, 700px);
+}
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--color-black);
+}
+
+.content {
+  min-height: calc(100% - 95px);
+  padding: 0 48px;
+}

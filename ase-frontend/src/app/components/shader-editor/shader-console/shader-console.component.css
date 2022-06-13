@@ -1,0 +1,40 @@
+.console-container {
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2),
+                0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+                0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 5px;
+    font-family: 'Roboto Mono', Courier, monospace;
+    font-weight: 400;
+    height: 100%;
+    padding: 0 10px;
+}
+.console-title {
+    font-weight: bold;
+    padding: 10px 0 5px;
+}
+.message-container {
+    overflow-y: auto;
+}
+.message {
+    padding: 2px 0;
+}
+.message mat-icon {
+    font-size: 22px;
+}
+.message.error {
+    color: #D70022;
+    background: #FDF2F5;
+}
+.message span {
+    font-size: 13px;
+    white-space: pre-line;
+    width: calc(100% - 25px);
+}
+.message-flex {
+    display: flex;
+    gap: 5px;
+}

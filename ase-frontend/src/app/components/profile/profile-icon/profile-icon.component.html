@@ -1,0 +1,24 @@
+<button mat-icon-button [matMenuTriggerFor]="profileMenu" aria-label="Profile">
+    <div class="profile-icon"></div>
+</button>
+<mat-menu #profileMenu>
+    <a routerLink="/profile">
+        <button mat-menu-item>
+            <mat-icon>account_circle</mat-icon>
+            <span>My Profile</span>
+        </button>
+    </a>
+    <a routerLink="/shader/new">
+        <button mat-menu-item>
+            <mat-icon>library_add</mat-icon>
+            Create Shader
+        </button>
+    </a>
+    <mat-divider></mat-divider>
+    <a routerLink="/settings">
+        <button mat-menu-item>
+            <mat-icon>settings</mat-icon>
+            Settings
+        </button>
+    </a>
+</mat-menu>

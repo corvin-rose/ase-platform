@@ -1,0 +1,17 @@
+mat-card {
+    width: 300px;
+}
+mat-card-title {
+    font-size: 18px;
+}
+.shader-preview {
+    aspect-ratio: 16/9;
+}
+mat-card-content {
+    position: relative;
+}
+.like-btn {
+    position: absolute;
+    right: -8px;
+    top: -8px;
+}

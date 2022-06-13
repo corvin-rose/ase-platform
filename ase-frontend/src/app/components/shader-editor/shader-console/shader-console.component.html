@@ -1,0 +1,14 @@
+<div class="console-container">
+    <span class="console-title" #consoleTitle>Console</span>
+    <mat-divider></mat-divider>
+    <div class="message-container" #messageContainer>
+        <div *ngFor="let m of messages" class="message" [ngClass]="{error: m.error}">
+            <div class="message-flex">
+                <mat-icon *ngIf="!m.error">check_circle_outline</mat-icon>
+                <mat-icon *ngIf="m.error">error_outline</mat-icon>
+                <span>{{ m.content }}</span>
+            </div>
+            <mat-divider></mat-divider>
+        </div>
+    </div>
+</div>

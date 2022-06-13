@@ -1,0 +1,7 @@
+<div class="content">
+    <app-shader-code-window (codeChanged)="onCodeChanged($event)"></app-shader-code-window>
+    <div class="shader-preview-container" #shaderPreviewContainer>
+        <app-shader-renderer [shader]="shader" (onMessage)="onMessage($event)"></app-shader-renderer>
+        <app-shader-console [containerHeight]="consoleContainerHeight" [messages]="messages"></app-shader-console>
+    </div>
+</div>
