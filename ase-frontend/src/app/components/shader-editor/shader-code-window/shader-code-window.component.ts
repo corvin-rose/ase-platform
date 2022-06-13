@@ -117,7 +117,19 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
          ]
        }
       });
-
+      monaco.languages.registerCompletionItemProvider('glsl', {
+        provideCompletionItems: () => {
+          let suggestions: any = [];
+          for (let key of this.keywords) {
+            suggestions.push({
+              label: key,
+              kind: monaco.languages.CompletionItemKind.Text,
+              insertText: key
+            })
+          }
+          return { suggestions: suggestions };
+        }
+      });
     });
   }
 
@@ -146,7 +158,6 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
       }
     }, 1000);
   }
-
 
   ngModelChanged(_code: string): void {
     this.needsUpdate = true;

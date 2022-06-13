@@ -16,7 +16,9 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   program: any = null;
   size: {x: number, y: number} = {x: 0, y: 0};
   vertexBuffer: number = 0;
+  indexBuffer: number = 0;
   compilerId: number = 0;
+  shaderLineOffset: number = 6;
 
   constructor() {
     this.shader = '';
@@ -36,7 +38,9 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     let currentCompiler: number = this.compilerId;
 
     const canvas = this.shaderRenderer.nativeElement;
-    this.size = {x: canvas.height, y: canvas.width};
+    canvas.width = 1080;
+    canvas.height = 720;
+    this.size = {x: canvas.width, y: canvas.height};
     const gl = canvas.getContext("webgl2");
 
     const vShaderSrc = `#version 300 es
@@ -55,14 +59,24 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
                         ${this.shader}`;
 
     const vertexBufferData: Float32Array = new Float32Array([
-        -1,  3,  0,
-         3, -1,  0,
-        -1, -1,  0
+      -0.5,  0.5, 0.0,
+      -0.5, -0.5, 0.0,
+       0.5, -0.5, 0.0,
+       0.5,  0.5, 0.0
     ]);
+    const indexData: Uint16Array = new Uint16Array([
+      3, 2, 1, 3, 1, 0
+    ]);
+
     this.vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertexBufferData, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+    this.indexBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
     this.program = this.createProgram(gl,
       this.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER),
@@ -70,9 +84,9 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     );
     gl.useProgram(this.program);
     gl.clearColor(0, 0, 0, 1);
-    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.viewport(0, 0, this.size.x, this.size.y);
 
-    this.sendMessages(['compiled!']);
+    this.sendMessages(['shader compiled!']);
 
     let currentTime: any = new Date();
     let lastTime: any = currentTime;
@@ -101,8 +115,9 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.uniform1f(timeLoc, this.time);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
     gl.vertexAttribPointer(positionAttrib, 3, gl.FLOAT, false, 0, 0);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
   }
 
   createShader(gl: any, src: string, type: any) {
@@ -113,7 +128,9 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       this.sendErrors([
         'Error compiling shader',
-        gl.getShaderInfoLog(shader)
+        gl.getShaderInfoLog(shader).replace(/(ERROR: [0-9]+:)([0-9]+)/g, (_:any, g1:string, g2:string) => {
+          return g1 + (parseInt(g2) - this.shaderLineOffset);
+        })
        ]);
       gl.deleteShader(shader);
       return null;
