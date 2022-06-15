@@ -1,0 +1,26 @@
+<div class="wrapper">
+    <mat-card>
+        <form class="login-form" #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)">
+            <h1>ASE</h1>
+            <span>The Art of Shaders for Everyone</span>
+            <mat-form-field>
+                <mat-label>first name</mat-label>
+                <input matInput type="text" name="firstName" minlength="3" ngModel required>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>last name</mat-label>
+                <input matInput type="text" name="lastName" minlength="3" ngModel required>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>email</mat-label>
+                <input matInput type="email" name="email" email ngModel required>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>password</mat-label>
+                <input matInput type="password" name="password" minlength="8" ngModel required>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Register</button>
+            <a routerLink="/login">Already have an account? Go to Login Page</a>
+        </form>
+    </mat-card>
+</div>

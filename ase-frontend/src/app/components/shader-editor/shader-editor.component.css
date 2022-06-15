@@ -3,11 +3,16 @@
     grid-template-columns: 5fr 3fr;
     grid-gap: 20px;
     width: 100%;
-    height: calc(100vh - 115px);
+    height: var(--content-height);
 }
 .shader-preview-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    max-height: calc(100vh - 115px);
+    max-height: var(--content-height);
+}
+.button-container {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 10px;
 }

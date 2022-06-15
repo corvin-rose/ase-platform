@@ -7,6 +7,8 @@
     --color-black: rgba(0,0,0,.87);
 
     --shadow: 0 2px 1px -1px #0003,0 1px 1px #00000024,0 1px 3px #0000001f;
+
+    --content-height: calc(100vh - 115px);
 }
 
 html, body { height: 100%; }

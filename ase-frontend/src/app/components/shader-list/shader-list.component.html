@@ -1,6 +1,7 @@
 <div class="shader-list">
     <app-shader-list-item 
         *ngFor="let s of shaders"
+        [id]="s.id + ''"
         [title]="s.title"
         [user]="authors.get(s.authorId) + ''">
     </app-shader-list-item>

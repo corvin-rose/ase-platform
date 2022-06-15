@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +17,10 @@ import { ShaderEditorComponent } from './components/shader-editor/shader-editor.
 import { ShaderRendererComponent } from './components/shader-editor/shader-renderer/shader-renderer.component';
 import { ShaderCodeWindowComponent } from './components/shader-editor/shader-code-window/shader-code-window.component';
 import { ShaderConsoleComponent } from './components/shader-editor/shader-console/shader-console.component';
+import { ShaderCreateDialogComponent } from './components/shader-editor/shader-create-dialog/shader-create-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 
 
 @NgModule({
@@ -29,7 +33,10 @@ import { ShaderConsoleComponent } from './components/shader-editor/shader-consol
     ShaderEditorComponent,
     ShaderRendererComponent,
     ShaderCodeWindowComponent,
-    ShaderConsoleComponent
+    ShaderConsoleComponent,
+    ShaderCreateDialogComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +45,9 @@ import { ShaderConsoleComponent } from './components/shader-editor/shader-consol
     MaterialModule,
     FormsModule,
     MonacoEditorModule,
-    HttpClientModule
+    HttpClientModule,
+    MatDialogModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

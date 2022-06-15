@@ -1,0 +1,18 @@
+<div class="wrapper">
+    <mat-card>
+        <form class="login-form">
+            <h1>ASE</h1>
+            <span>The Art of Shaders for Everyone</span>
+            <mat-form-field>
+                <mat-label>email</mat-label>
+                <input matInput type="email" name="email" [formControl]="email" required>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>password</mat-label>
+                <input matInput type="password" name="password" required>
+            </mat-form-field>
+            <button mat-raised-button color="primary" type="submit">Login</button>
+            <a routerLink="/register">Create an account? Go to Register Page</a>
+        </form>
+    </mat-card>
+</div>

@@ -2,8 +2,8 @@ export interface Shader {
     id: string;
     title: string;
     shaderCode: string;
-    previewImg: string;
+    previewImg?: string;
     authorId: string;
-    createdAt: Date;
-    likes: number;
+    createdAt?: Date;
+    likes?: number;
 }
