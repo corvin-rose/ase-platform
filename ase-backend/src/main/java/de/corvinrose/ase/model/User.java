@@ -1,19 +1,25 @@
 package de.corvinrose.ase.model;
 
+import de.corvinrose.ase.security.SecurityConfig;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.UUID;
 import javax.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 @Setter
 @Builder
 @Entity
 @Table(name = "ase_user")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
 
 	@Id
 	@GeneratedValue(generator = "UUID")
@@ -56,5 +62,41 @@ public class User implements Serializable {
 		this.password = password;
 		this.description = description;
 		this.profileImg = profileImg;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		SimpleGrantedAuthority authority = new SimpleGrantedAuthority(SecurityConfig.AUTHORITIES);
+		return Collections.singletonList(authority);
+	}
+
+	@Override
+	public String getPassword() {
+		return password;
+	}
+
+	@Override
+	public String getUsername() {
+		return email;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 }

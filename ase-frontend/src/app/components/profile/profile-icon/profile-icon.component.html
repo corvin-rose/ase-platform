@@ -1,7 +1,9 @@
-<button mat-stroked-button color="primary" routerLink="/login">Login</button>
-<button mat-icon-button [matMenuTriggerFor]="profileMenu" aria-label="Profile">
+
+<button *ngIf="!userLoggedIn()" mat-stroked-button color="primary" routerLink="/login">Login</button>
+<button *ngIf="userLoggedIn()" mat-icon-button [matMenuTriggerFor]="profileMenu" aria-label="Profile">
     <div class="profile-icon"></div>
 </button>
+
 <mat-menu #profileMenu>
     <a routerLink="/profile">
         <button mat-menu-item>
@@ -22,4 +24,8 @@
             Settings
         </button>
     </a>
+    <button mat-menu-item (click)="onLogoutClick()">
+        <mat-icon>input</mat-icon>
+        Logout
+    </button>
 </mat-menu>

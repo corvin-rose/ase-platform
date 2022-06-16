@@ -10,6 +10,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   @ViewChild('shaderRenderer', {static: true}) shaderRenderer!: ElementRef;
 
   @Output() onMessage = new EventEmitter<{content: string, error: boolean}[]>();
+  @Output() onCompile = new EventEmitter<{compileImg: string}>();
   @Input() shader: string;
 
   time: number = 0;
@@ -41,7 +42,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     canvas.width = 1080;
     canvas.height = 720;
     this.size = {x: canvas.width, y: canvas.height};
-    const gl = canvas.getContext("webgl2");
+    const gl = canvas.getContext("webgl2", {preserveDrawingBuffer: true});
 
     const vShaderSrc = `#version 300 es
                         precision highp float;
@@ -87,6 +88,20 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.viewport(0, 0, this.size.x, this.size.y);
 
     this.sendMessages(['shader compiled!']);
+
+
+    this.render(gl);
+
+    let pixelValues = new Uint8ClampedArray(4 * this.size.x * this.size.y);
+    gl.readPixels(0, 0, this.size.x, this.size.y, gl.RGBA, gl.UNSIGNED_BYTE, pixelValues);
+    let preview = document.createElement('canvas')
+    let imageData = new ImageData(pixelValues, this.size.x, this.size.y);
+    preview.getContext('2d')?.putImageData(imageData, 0, 0);
+
+    this.onCompile.emit({
+      compileImg: preview.toDataURL()
+    });
+
 
     let currentTime: any = new Date();
     let lastTime: any = currentTime;
@@ -156,6 +171,14 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.deleteShader(vShader);
 
     return prog;
+  }
+
+  arrayBufferToBase64(bytes: Uint8Array): string {
+    let bin = '';
+    for (let x = 0; x < bytes.byteLength; x++) {
+      bin += String.fromCharCode(bytes[x]);
+    }
+    return 'data:image/jpeg;base64,' + window.btoa(bin);;
   }
 
   sendMessages(message: string[]): void {

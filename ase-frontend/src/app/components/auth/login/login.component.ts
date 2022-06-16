@@ -1,5 +1,11 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Token } from '../../../rest/model/token';
+import { User } from '../../../rest/model/user';
+import { AuthService } from '../../../rest/service/auth.service';
+import { UserService } from '../../../rest/service/user.service';
 
 @Component({
   selector: 'app-login',
@@ -8,13 +14,29 @@ import { FormControl, Validators } from '@angular/forms';
 })
 export class LoginComponent {
 
-  email = new FormControl('', [Validators.required, Validators.email]);
+  constructor(private router: Router, private userService: UserService, private authService: AuthService) { }
+  
+  onSubmit(form: NgForm): void {
+    if (!form.valid) return;
 
-  getErrorMessage() {
-    if (this.email.hasError('required')) {
-      return 'You must enter a value';
+    const user: User = {
+      id: '',
+      firstName: '',
+      lastName: '',
+      email: form.value.email,
+      password: form.value.password
     }
-    return this.email.hasError('email') ? 'Not a valid email' : '';
+
+    this.userService.loginUser(user).subscribe({
+      next: (response: Token) => {
+        this.authService.registerSuccessfulLogin(response.token);
+        // TODO: redirect to user profile
+        this.router.navigate(['/']);
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('Login error', error.message);
+      }
+    });
   }
 
 }

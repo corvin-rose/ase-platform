@@ -13,7 +13,7 @@ CREATE TABLE ase_user (
 
 
 INSERT INTO ase_user (id, first_name, last_name, email, password)
-VALUES ('f6acdbc8-f257-4ad0-b343-39d5dbe9755a', 'dev', 'user', 'dev.user@corvin-rose.de', '');
+VALUES ('f6acdbc8-f257-4ad0-b343-39d5dbe9755a', 'dev', 'user', 'dev.user@corvin-rose.de', '$2a$10$7wf3EAA9d5kxlg0F5xdUeejkZt.D6wYBymRuAmKNQpB.Lx9uAUjE.');
 
 INSERT INTO ase_user (id, first_name, last_name, email, password)
-VALUES (uuid_generate_v4(), 'test', 'user', 'test.user@corvin-rose.de', '');
+VALUES (uuid_generate_v4(), 'test', 'user', 'test.user@corvin-rose.de', '$2a$10$7wf3EAA9d5kxlg0F5xdUeejkZt.D6wYBymRuAmKNQpB.Lx9uAUjE.');

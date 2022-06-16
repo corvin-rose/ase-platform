@@ -10,6 +10,7 @@ export class ShaderListItemComponent {
   @Input() title: string;
   @Input() user: string;
   @Input() id: string;
+  @Input() previewImg: string;
 
   like: boolean = false;
   likeCount: number = 0;
@@ -18,6 +19,7 @@ export class ShaderListItemComponent {
     this.title = 'Shader';
     this.user = 'User';
     this.id = '';
+    this.previewImg = '';
   }
 
 }

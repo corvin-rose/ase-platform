@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './modules/material/material.module';
 import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ProfileIconComponent } from './components/profile/profile-icon/profile-icon.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
@@ -21,6 +21,7 @@ import { ShaderCreateDialogComponent } from './components/shader-editor/shader-c
 import { MatDialogModule } from '@angular/material/dialog';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { HttpInterceptorService } from './rest/service/http-interceptor.service';
 
 
 @NgModule({
@@ -49,7 +50,13 @@ import { RegisterComponent } from './components/auth/register/register.component
     MatDialogModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

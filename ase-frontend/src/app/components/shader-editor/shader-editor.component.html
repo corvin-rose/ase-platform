@@ -1,7 +1,7 @@
 <div class="content">
     <app-shader-code-window (codeChanged)="onCodeChanged($event)"></app-shader-code-window>
     <div class="shader-preview-container" #shaderPreviewContainer>
-        <app-shader-renderer [shader]="shader" (onMessage)="onMessage($event)"></app-shader-renderer>
+        <app-shader-renderer [shader]="shader" (onMessage)="onMessage($event)" (onCompile)="onCompile($event)"></app-shader-renderer>
         <app-shader-console [containerHeight]="consoleContainerHeight" [messages]="messages"></app-shader-console>
         <div class="button-container" #buttonContainer>
             <button mat-raised-button color="primary" (click)="onCreateClick()">Create</button>

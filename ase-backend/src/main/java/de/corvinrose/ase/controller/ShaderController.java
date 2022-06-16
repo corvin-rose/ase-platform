@@ -4,19 +4,17 @@ import de.corvinrose.ase.model.Shader;
 import de.corvinrose.ase.service.ShaderService;
 import java.util.List;
 import java.util.UUID;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/shader")
 public class ShaderController {
 
 	private final ShaderService shaderService;
-
-	public ShaderController(ShaderService shaderService) {
-		this.shaderService = shaderService;
-	}
 
 	@GetMapping
 	public ResponseEntity<List<Shader>> getAllShaders() {
@@ -26,7 +24,9 @@ public class ShaderController {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<Shader> getShaderById(@PathVariable("id") UUID id) {
-		Shader shader = shaderService.findShaderById(id).orElse(new Shader());
+		Shader shader = shaderService.findShaderById(id).orElseThrow(() -> {
+			throw new IllegalArgumentException("No Shader with id " + id.toString() + " exists");
+		});
 		return new ResponseEntity<>(shader, HttpStatus.OK);
 	}
 

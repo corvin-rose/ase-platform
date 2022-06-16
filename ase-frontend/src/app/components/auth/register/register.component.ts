@@ -25,7 +25,7 @@ export class RegisterComponent {
       password: form.value.password
     }
 
-    this.userService.addUser(user).subscribe({
+    this.userService.registerUser(user).subscribe({
       next: () => {
         // TODO: redirect to user profile
         this.router.navigate(['/']);
