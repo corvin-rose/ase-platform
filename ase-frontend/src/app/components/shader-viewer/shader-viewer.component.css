@@ -11,15 +11,16 @@
     gap: 20px;
     max-height: var(--content-height);
 }
-.button-container {
+.shader-details {
+    position: relative;
     display: flex;
-    flex-direction: row-reverse;
-    gap: 10px;
+    justify-content: space-between;
 }
-.loading-button {
-    width: 64px;
-    min-height: 36px;
+.shader-details h2 {
+    margin: 0;
 }
-.loading-button mat-spinner {
-    margin: 0 auto;
+.like-btn {
+    position: absolute;
+    right: -3px;
+    top: -3px;
 }

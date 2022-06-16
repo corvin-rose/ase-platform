@@ -3,11 +3,36 @@
     <div class="shader-preview-container" #shaderPreviewContainer>
         <app-shader-renderer [shader]="shader" (onMessage)="onMessage($event)" (onCompile)="onCompile($event)"></app-shader-renderer>
         <app-shader-console [containerHeight]="consoleContainerHeight" [messages]="messages"></app-shader-console>
-        <div class="button-container" #buttonContainer>
-            <button mat-raised-button color="primary" (click)="onCreateClick()">Create</button>
-            <!-- <button mat-raised-button color="primary">Save</button>
-            <button mat-raised-button>Preview</button>
-            <button mat-raised-button>Settings</button> -->
+        <div #buttonContainer>
+            <div *ngIf="editMode" class="button-container">
+                <button 
+                    *ngIf="!loading"
+                    mat-raised-button 
+                    color="primary" 
+                    [disabled]="!userMadeChanges()" 
+                    (click)="onSaveClick()">
+                        Save
+                </button>
+                <button *ngIf="loading" mat-raised-button class="loading-button" [disabled]="true">
+                    <mat-spinner [diameter]="20"></mat-spinner>
+                </button>
+    
+                <button mat-raised-button color="warn" (click)="onDeleteClick()">Delete</button>
+    
+                <button mat-raised-button (click)="onSettingsClick()">Settings</button>
+            </div>
+            
+            <div *ngIf="!editMode" class="button-container">
+                <button 
+                    *ngIf="!loading"
+                    mat-raised-button 
+                    color="primary" 
+                    (click)="onCreateClick()">Create</button>
+
+                <button *ngIf="loading" mat-raised-button class="loading-button" [disabled]="true">
+                    <mat-spinner [diameter]="20"></mat-spinner>
+                </button>
+            </div>
         </div>
     </div>
 </div>

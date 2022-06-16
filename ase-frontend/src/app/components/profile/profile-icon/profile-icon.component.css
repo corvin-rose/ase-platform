@@ -4,6 +4,12 @@
     border-radius: 50%;
     border: 1px solid;
     color: var(--color-black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profile-icon .name {
+    text-transform: uppercase;
 }
 a {
     text-decoration: none;

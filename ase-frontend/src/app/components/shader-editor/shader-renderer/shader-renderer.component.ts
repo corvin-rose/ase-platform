@@ -25,7 +25,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     this.shader = '';
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(_changes: SimpleChanges): void {
     this.compileShaders();
   }
 
@@ -39,8 +39,8 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     let currentCompiler: number = this.compilerId;
 
     const canvas = this.shaderRenderer.nativeElement;
-    canvas.width = 1080;
-    canvas.height = 720;
+    canvas.width = 640;
+    canvas.height = 320;
     this.size = {x: canvas.width, y: canvas.height};
     const gl = canvas.getContext("webgl2", {preserveDrawingBuffer: true});
 
@@ -94,12 +94,14 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
     let pixelValues = new Uint8ClampedArray(4 * this.size.x * this.size.y);
     gl.readPixels(0, 0, this.size.x, this.size.y, gl.RGBA, gl.UNSIGNED_BYTE, pixelValues);
-    let preview = document.createElement('canvas')
+    let preview = document.createElement('canvas');
+    preview.width = this.size.x;
+    preview.height = this.size.y;
     let imageData = new ImageData(pixelValues, this.size.x, this.size.y);
-    preview.getContext('2d')?.putImageData(imageData, 0, 0);
+    preview.getContext('2d')?.putImageData(this.flipImageData(imageData), 0, 0);
 
     this.onCompile.emit({
-      compileImg: preview.toDataURL()
+      compileImg: preview.toDataURL("image/jpeg")
     });
 
 
@@ -173,12 +175,20 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     return prog;
   }
 
-  arrayBufferToBase64(bytes: Uint8Array): string {
-    let bin = '';
-    for (let x = 0; x < bytes.byteLength; x++) {
-      bin += String.fromCharCode(bytes[x]);
+  flipImageData(imageData: ImageData): ImageData {
+    let flipped = new ImageData(imageData.width, imageData.height);
+    for (let row = 0; row < imageData.height; row++) {
+      for (let col = 0; col < imageData.width; col++) {
+        let sourcePixel = imageData.data.subarray(
+            (row * imageData.width + col) * 4,
+            (row * imageData.width + col) * 4 + 4
+        );
+        for (let i = 0; i < 4; i++) {
+          flipped.data[((imageData.height - row) * flipped.width + col) * 4 + i] = sourcePixel[i];
+        }
+      }
     }
-    return 'data:image/jpeg;base64,' + window.btoa(bin);;
+    return flipped;
   }
 
   sendMessages(message: string[]): void {

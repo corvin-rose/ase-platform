@@ -1,5 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit, Output, EventEmitter, OnDestroy, Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MonacoEditorLoaderService } from '@materia-ui/ngx-monaco-editor';
+import { Shader } from '../../../rest/model/shader';
+import { ErrorService } from '../../../rest/service/error.service';
+import { ShaderService } from '../../../rest/service/shader.service';
 
 @Component({
   selector: 'app-shader-code-window',
@@ -15,9 +20,10 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   // Autocomplete
   // https://microsoft.github.io/monaco-editor/playground.html#extending-language-services-custom-languages
 
+  @Input() readOnly: boolean = false;
   @Output() codeChanged = new EventEmitter<string>();
 
-  editorOptions = { theme: 'vs-light', language: 'glsl' };
+  editorOptions: any = { theme: 'vs-light', language: 'glsl' };
   code: string = '// Variables you can use:\n' +
                   '// TIME: float which represents the runtime\n' +
                   '// RESOLUTION: vec2 which represents the resultion of the screen\n' +
@@ -25,14 +31,18 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
                   '// Basic Shader:\n\n' +
                   'void main() {\n' +
                   '\tvec2 uv = gl_FragCoord.xy / RESOLUTION;\n' +
-                  '\tgl_FragColor = vec4(0.0);\n' +
+                  '\tvec3 color = vec3(0.0);\n' +
+                  '\tgl_FragColor = vec4(color, 1.0);\n' +
                   '}\n';
   lastChange: number = 0;
   needsUpdate: boolean = false;
   changeInterval: any = null;
   monacoLoaded: any = null;
 
-  constructor(private monacoLoaderService: MonacoEditorLoaderService) {
+  constructor(private monacoLoaderService: MonacoEditorLoaderService,
+              private route: ActivatedRoute,
+              private shaderService: ShaderService,
+              private errorService: ErrorService) {
     this.monacoLoaded = this.monacoLoaderService.isMonacoLoaded$.subscribe(() => {
       if (typeof monaco === 'undefined') return;
 
@@ -150,6 +160,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   ]
 
   ngOnInit(): void {
+    this.codeChanged.emit(this.code);
     this.lastChange = new Date().getTime();
     this.changeInterval = setInterval(() => {
       if (this.needsUpdate && (new Date().getTime() - this.lastChange) > 1000) {
@@ -157,6 +168,26 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
         this.codeChanged.emit(this.code);
       }
     }, 1000);
+
+    if (this.readOnly) {
+      this.editorOptions = { theme: 'vs-light', language: 'glsl', readOnly: this.readOnly };
+    }
+
+    let path: string = '/' + this.route.snapshot.url.join('/');
+    if (path !== '/shader/new') {
+      let shaderId: string = this.route.snapshot.params['id'];
+      this.shaderService.getShaderById(shaderId).subscribe({
+        next: (shader: Shader) => {
+          this.code = shader.shaderCode;
+        },
+        error: (error: HttpErrorResponse) => {
+          this.code = '// Shader could not be loaded\n\n' + 
+                      'void main() {}';
+          this.errorService.showError(error);
+          console.error(error.message);
+        }
+      });
+    }
   }
 
   ngModelChanged(_code: string): void {

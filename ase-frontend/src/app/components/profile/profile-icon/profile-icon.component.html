@@ -1,7 +1,9 @@
 
 <button *ngIf="!userLoggedIn()" mat-stroked-button color="primary" routerLink="/login">Login</button>
 <button *ngIf="userLoggedIn()" mat-icon-button [matMenuTriggerFor]="profileMenu" aria-label="Profile">
-    <div class="profile-icon"></div>
+    <div class="profile-icon">
+        <span class="name">{{ getProfileIconLetters() }}</span>
+    </div>
 </button>
 
 <mat-menu #profileMenu>

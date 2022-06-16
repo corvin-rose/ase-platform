@@ -4,6 +4,7 @@ import { Shader } from '../../rest/model/shader';
 import { User } from '../../rest/model/user';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../rest/service/user.service';
+import { ErrorService } from '../../rest/service/error.service';
 
 @Component({
   selector: 'app-shader-list',
@@ -15,7 +16,9 @@ export class ShaderListComponent implements OnInit {
   shaders: Shader[] = [];
   authors: Map<string, string> = new Map();
 
-  constructor(private shaderService: ShaderService, private userService: UserService) { }
+  constructor(private shaderService: ShaderService, 
+              private userService: UserService,
+              private errorService: ErrorService) { }
 
   ngOnInit(): void {
     this.getShaders();
@@ -28,6 +31,7 @@ export class ShaderListComponent implements OnInit {
         this.getUsers(response.map(v => v.authorId));
       },
       error: (error: HttpErrorResponse) => {
+        this.errorService.showError(error);
         console.error(error.message);
       }
     })
@@ -41,6 +45,7 @@ export class ShaderListComponent implements OnInit {
         });
       },
       error: (error: HttpErrorResponse) => {
+        this.errorService.showError(error);
         console.error(error.message);
       }
     });

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../rest/service/auth.service';
+import { Auth, AuthService } from '../../../rest/service/auth.service';
+import { User } from '../../../rest/model/user';
 
 @Component({
   selector: 'app-profile-icon',
@@ -18,5 +19,13 @@ export class ProfileIconComponent {
   onLogoutClick(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  getProfileIconLetters(): string {
+    if (Auth.user !== null) {
+      let user: User = Auth.user;
+      return user.firstName.charAt(0) + user.lastName.charAt(0);
+    }
+    return "U";
   }
 }

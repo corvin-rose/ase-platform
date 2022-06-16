@@ -2,6 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Token } from '../model/token';
 import { User } from '../model/user';
+import { ErrorService } from './error.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -11,7 +12,8 @@ export class AuthService {
 
   SESSION_FIELD = 'session_id';
 
-  constructor(private userService: UserService) {
+  constructor(private userService: UserService,
+              private errorService: ErrorService) {
     Auth.token = localStorage.getItem(this.SESSION_FIELD);
     this.getUserAfterAuth();
   }
@@ -43,6 +45,7 @@ export class AuthService {
           Auth.user = response;
         },
         error: (error: HttpErrorResponse) => {
+          this.errorService.showError(error);
           console.error(error.message);
         }
       });

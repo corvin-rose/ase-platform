@@ -1,14 +1,14 @@
-<h1 mat-dialog-title>Create shader</h1>
-<div mat-dialog-content>
+<h2 mat-dialog-title>Create shader</h2>
+<mat-dialog-content>
   <mat-form-field appearance="fill">
     <mat-label>Shader Title</mat-label>
     <input matInput [(ngModel)]="data">
   </mat-form-field>
-</div>
-<div class="button-container" mat-dialog-actions>
-  <button mat-raised-button color="warn" (click)="onCancelClick()">Cancel</button>
-  <button *ngIf="data.length >= 3; else createDisabled" mat-raised-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Create</button>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button color="warn" (click)="onCancelClick()">Cancel</button>
+  <button *ngIf="data.length >= 3; else createDisabled" mat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Create</button>
   <ng-template #createDisabled>
-    <button mat-raised-button disabled>Create</button>
+    <button mat-button disabled>Create</button>
   </ng-template>
-</div>
+</mat-dialog-actions>

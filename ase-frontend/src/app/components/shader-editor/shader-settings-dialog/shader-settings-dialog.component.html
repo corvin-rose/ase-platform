@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>Shader Settings</h2>
+<mat-dialog-content>
+  <mat-form-field appearance="fill">
+    <mat-label>Shader Title</mat-label>
+    <input matInput [(ngModel)]="title">
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button color="warn" mat-dialog-close>Cancel</button>
+  <button *ngIf="title.length >= 3; else createDisabled" mat-button color="primary" (click)="onSaveClick()" cdkFocusInitial>Save</button>
+  <ng-template #createDisabled>
+    <button mat-button disabled>Save</button>
+  </ng-template>
+</mat-dialog-actions>

@@ -1,0 +1,26 @@
+<div class="content">
+    <app-shader-code-window [readOnly]="true"></app-shader-code-window>
+    <div class="shader-preview-container" #shaderPreviewContainer>
+        <app-shader-renderer [shader]="shaderCode"></app-shader-renderer>
+        <div class="shader-details">
+            <div>
+                <h2>{{ shaderTitle }}</h2>
+                <span>{{ author }}</span>
+            </div>
+            <div class="like-btn">
+                <span>{{ likeCount }}</span>
+                <button *ngIf="like; else notLiked" mat-icon-button color="warn" aria-label="Like button" (click)="like=false">
+                    <mat-icon>favorite</mat-icon>
+                </button>
+                <ng-template #notLiked>
+                    <button mat-icon-button aria-label="Like button" (click)="like=true">
+                        <mat-icon>favorite_border</mat-icon>
+                    </button>
+                </ng-template>
+            </div>
+        </div>
+        <div *ngIf="canEdit">
+            <button mat-raised-button color="primary" routerLink="edit">Edit</button>
+        </div>
+    </div>
+</div>
