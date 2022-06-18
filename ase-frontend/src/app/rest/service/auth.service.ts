@@ -1,25 +1,26 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Token } from '../model/token';
-import { User } from '../model/user';
-import { ErrorService } from './error.service';
-import { UserService } from './user.service';
+import { HttpErrorResponse } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Token } from "../model/token";
+import { User } from "../model/user";
+import { ErrorService } from "./error.service";
+import { UserService } from "./user.service";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class AuthService {
+  SESSION_FIELD = "session_id";
 
-  SESSION_FIELD = 'session_id';
-
-  constructor(private userService: UserService,
-              private errorService: ErrorService) {
+  constructor(
+    private userService: UserService,
+    private errorService: ErrorService
+  ) {
     Auth.token = localStorage.getItem(this.SESSION_FIELD);
     this.getUserAfterAuth();
   }
 
   registerSuccessfulLogin(token: string): void {
-    localStorage.setItem(this.SESSION_FIELD, token)
+    localStorage.setItem(this.SESSION_FIELD, token);
     Auth.token = token;
     this.getUserAfterAuth();
   }
@@ -38,7 +39,7 @@ export class AuthService {
   private getUserAfterAuth(): void {
     if (Auth.token !== null) {
       const authToken: Token = {
-        token: Auth.token
+        token: Auth.token,
       };
       this.userService.authUser(authToken).subscribe({
         next: (response: User) => {
@@ -47,7 +48,7 @@ export class AuthService {
         error: (error: HttpErrorResponse) => {
           this.errorService.showError(error);
           console.error(error.message);
-        }
+        },
       });
     }
   }

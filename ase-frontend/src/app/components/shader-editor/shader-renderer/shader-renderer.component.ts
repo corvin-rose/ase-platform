@@ -1,28 +1,39 @@
-import { Component, OnInit, ElementRef, ViewChild, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ElementRef,
+  ViewChild,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 
 @Component({
-  selector: 'app-shader-renderer',
-  templateUrl: './shader-renderer.component.html',
-  styleUrls: ['./shader-renderer.component.css']
+  selector: "app-shader-renderer",
+  templateUrl: "./shader-renderer.component.html",
+  styleUrls: ["./shader-renderer.component.css"],
 })
 export class ShaderRendererComponent implements OnInit, OnChanges {
+  @ViewChild("shaderRenderer", { static: true }) shaderRenderer!: ElementRef;
 
-  @ViewChild('shaderRenderer', {static: true}) shaderRenderer!: ElementRef;
-
-  @Output() onMessage = new EventEmitter<{content: string, error: boolean}[]>();
-  @Output() onCompile = new EventEmitter<{compileImg: string}>();
+  @Output() onMessage = new EventEmitter<
+    { content: string; error: boolean }[]
+  >();
+  @Output() onCompile = new EventEmitter<{ compileImg: string }>();
   @Input() shader: string;
 
   time: number = 0;
   program: any = null;
-  size: {x: number, y: number} = {x: 0, y: 0};
+  size: { x: number; y: number } = { x: 0, y: 0 };
   vertexBuffer: number = 0;
   indexBuffer: number = 0;
   compilerId: number = 0;
   shaderLineOffset: number = 6;
 
   constructor() {
-    this.shader = '';
+    this.shader = "";
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -41,8 +52,8 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     const canvas = this.shaderRenderer.nativeElement;
     canvas.width = 640;
     canvas.height = 320;
-    this.size = {x: canvas.width, y: canvas.height};
-    const gl = canvas.getContext("webgl2", {preserveDrawingBuffer: true});
+    this.size = { x: canvas.width, y: canvas.height };
+    const gl = canvas.getContext("webgl2", { preserveDrawingBuffer: true });
 
     const vShaderSrc = `#version 300 es
                         precision highp float;
@@ -60,14 +71,20 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
                         ${this.shader}`;
 
     const vertexBufferData: Float32Array = new Float32Array([
-      -0.5,  0.5, 0.0,
-      -0.5, -0.5, 0.0,
-       0.5, -0.5, 0.0,
-       0.5,  0.5, 0.0
+      -0.5,
+      0.5,
+      0.0,
+      -0.5,
+      -0.5,
+      0.0,
+      0.5,
+      -0.5,
+      0.0,
+      0.5,
+      0.5,
+      0.0,
     ]);
-    const indexData: Uint16Array = new Uint16Array([
-      3, 2, 1, 3, 1, 0
-    ]);
+    const indexData: Uint16Array = new Uint16Array([3, 2, 1, 3, 1, 0]);
 
     this.vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -79,43 +96,50 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-    this.program = this.createProgram(gl,
+    this.program = this.createProgram(
+      gl,
       this.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER),
-      this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER),
+      this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER)
     );
     gl.useProgram(this.program);
     gl.clearColor(0, 0, 0, 1);
     gl.viewport(0, 0, this.size.x, this.size.y);
 
-    this.sendMessages(['shader compiled!']);
-
+    this.sendMessages(["shader compiled!"]);
 
     this.render(gl);
 
     let pixelValues = new Uint8ClampedArray(4 * this.size.x * this.size.y);
-    gl.readPixels(0, 0, this.size.x, this.size.y, gl.RGBA, gl.UNSIGNED_BYTE, pixelValues);
-    let preview = document.createElement('canvas');
+    gl.readPixels(
+      0,
+      0,
+      this.size.x,
+      this.size.y,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      pixelValues
+    );
+    let preview = document.createElement("canvas");
     preview.width = this.size.x;
     preview.height = this.size.y;
     let imageData = new ImageData(pixelValues, this.size.x, this.size.y);
-    preview.getContext('2d')?.putImageData(this.flipImageData(imageData), 0, 0);
+    preview.getContext("2d")?.putImageData(this.flipImageData(imageData), 0, 0);
 
     this.onCompile.emit({
-      compileImg: preview.toDataURL("image/jpeg")
+      compileImg: preview.toDataURL("image/jpeg"),
     });
-
 
     let currentTime: any = new Date();
     let lastTime: any = currentTime;
     let loop = () => {
-        currentTime = new Date();
-        let deltaTime: number = (currentTime - lastTime) / 1000;
-        this.time += deltaTime;
+      currentTime = new Date();
+      let deltaTime: number = (currentTime - lastTime) / 1000;
+      this.time += deltaTime;
 
-        this.render(gl);
-        if (currentCompiler === this.compilerId) requestAnimationFrame(loop);
+      this.render(gl);
+      if (currentCompiler === this.compilerId) requestAnimationFrame(loop);
 
-        lastTime = currentTime;
+      lastTime = currentTime;
     };
     requestAnimationFrame(loop);
   }
@@ -123,10 +147,16 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   render(gl: any): void {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    const positionAttrib: number = gl.getAttribLocation(this.program, "position");
+    const positionAttrib: number = gl.getAttribLocation(
+      this.program,
+      "position"
+    );
     gl.enableVertexAttribArray(positionAttrib);
 
-    const resolutionLoc: number = gl.getUniformLocation(this.program, "RESOLUTION");
+    const resolutionLoc: number = gl.getUniformLocation(
+      this.program,
+      "RESOLUTION"
+    );
     gl.uniform2f(resolutionLoc, this.size.x, this.size.y);
     const timeLoc: number = gl.getUniformLocation(this.program, "TIME");
     gl.uniform1f(timeLoc, this.time);
@@ -144,11 +174,16 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       this.sendErrors([
-        'Error compiling shader',
-        gl.getShaderInfoLog(shader).replace(/(ERROR: [0-9]+:)([0-9]+)/g, (_:any, g1:string, g2:string) => {
-          return g1 + (parseInt(g2) - this.shaderLineOffset);
-        })
-       ]);
+        "Error compiling shader",
+        gl
+          .getShaderInfoLog(shader)
+          .replace(
+            /(ERROR: [0-9]+:)([0-9]+)/g,
+            (_: any, g1: string, g2: string) => {
+              return g1 + (parseInt(g2) - this.shaderLineOffset);
+            }
+          ),
+      ]);
       gl.deleteShader(shader);
       return null;
     }
@@ -162,7 +197,10 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.linkProgram(prog);
 
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error("Error creating shader program.", gl.getProgramInfoLog(prog));
+      console.error(
+        "Error creating shader program.",
+        gl.getProgramInfoLog(prog)
+      );
       gl.deleteProgram(prog);
       return null;
     }
@@ -180,11 +218,13 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     for (let row = 0; row < imageData.height; row++) {
       for (let col = 0; col < imageData.width; col++) {
         let sourcePixel = imageData.data.subarray(
-            (row * imageData.width + col) * 4,
-            (row * imageData.width + col) * 4 + 4
+          (row * imageData.width + col) * 4,
+          (row * imageData.width + col) * 4 + 4
         );
         for (let i = 0; i < 4; i++) {
-          flipped.data[((imageData.height - row) * flipped.width + col) * 4 + i] = sourcePixel[i];
+          flipped.data[
+            ((imageData.height - row) * flipped.width + col) * 4 + i
+          ] = sourcePixel[i];
         }
       }
     }
@@ -192,14 +232,18 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   }
 
   sendMessages(message: string[]): void {
-    this.onMessage.emit(message.map(v => {
-      return {content: v, error: false}
-    }));
+    this.onMessage.emit(
+      message.map((v) => {
+        return { content: v, error: false };
+      })
+    );
   }
 
   sendErrors(message: string[]): void {
-    this.onMessage.emit(message.map(v => {
-      return {content: v, error: true}
-    }));
+    this.onMessage.emit(
+      message.map((v) => {
+        return { content: v, error: true };
+      })
+    );
   }
 }

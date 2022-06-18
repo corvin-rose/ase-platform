@@ -22,3 +22,29 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     color: #fff;
     font-weight: 400;
 }
+
+/* Scrollbar */
+
+*::-webkit-scrollbar {
+    width: 8px;
+}
+@media (max-width: 720px) {
+    *::-webkit-scrollbar {
+        width: 4px;
+    }
+}
+
+*::-webkit-scrollbar-track {
+    background: #ECEDF1;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #BCBDC1;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background: #ACADB1;
+}
+* {
+    scrollbar-color: #BCBDC1 #ECEDF1;
+    scrollbar-width: thin;
+}

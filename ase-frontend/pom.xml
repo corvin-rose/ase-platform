@@ -17,4 +17,38 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>com.diffplug.spotless</groupId>
+        <artifactId>spotless-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <formats>
+            <format>
+              <includes>
+                <include>src/app/**/*.ts</include>
+              </includes>
+
+              <prettier>
+                <prettierVersion>2.0.5</prettierVersion>
+                <config>
+                  <useTabs>false</useTabs>
+                  <tabWidth>2</tabWidth>
+                </config>
+              </prettier>
+            </format>
+          </formats>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

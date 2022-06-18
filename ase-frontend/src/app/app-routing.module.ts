@@ -1,22 +1,40 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { ShaderListComponent } from './components/shader-list/shader-list.component';
-import { ShaderEditorComponent } from './components/shader-editor/shader-editor.component';
-import { LoginComponent } from './components/auth/login/login.component';
-import { RegisterComponent } from './components/auth/register/register.component';
-import { ShaderViewerComponent } from './components/shader-viewer/shader-viewer.component';
+import { NgModule } from "@angular/core";
+import { RouterModule, Routes } from "@angular/router";
+import { ShaderListComponent } from "./components/shader-list/shader-list.component";
+import { ShaderEditorComponent } from "./components/shader-editor/shader-editor.component";
+import { LoginComponent } from "./components/auth/login/login.component";
+import { RegisterComponent } from "./components/auth/register/register.component";
+import { ShaderViewerComponent } from "./components/shader-viewer/shader-viewer.component";
+import { AuthGuard } from "./guards/auth-guard";
+import { ShaderGuard } from "./guards/shader-guard";
+import { LeavePageGuard } from "./guards/leave-page-guard";
 
 const routes: Routes = [
-  { path: '', component: ShaderListComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'shader/new', component: ShaderEditorComponent },
-  { path: 'shader/:id', component: ShaderViewerComponent },
-  { path: 'shader/:id/edit', component: ShaderEditorComponent },
+  { path: "", canActivate: [AuthGuard], component: ShaderListComponent },
+  { path: "login", component: LoginComponent },
+  { path: "register", component: RegisterComponent },
+  {
+    path: "shader/new",
+    canActivate: [AuthGuard],
+    canDeactivate: [LeavePageGuard],
+    component: ShaderEditorComponent,
+  },
+  {
+    path: "shader/:id",
+    canActivate: [AuthGuard],
+    component: ShaderViewerComponent,
+  },
+  {
+    path: "shader/:id/edit",
+    canActivate: [AuthGuard, ShaderGuard],
+    canDeactivate: [LeavePageGuard],
+    component: ShaderEditorComponent,
+  },
+  { path: "**", canActivate: [AuthGuard], component: ShaderListComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

@@ -1,12 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input } from "@angular/core";
 
 @Component({
-  selector: 'app-shader-list-item',
-  templateUrl: './shader-list-item.component.html',
-  styleUrls: ['./shader-list-item.component.css']
+  selector: "app-shader-list-item",
+  templateUrl: "./shader-list-item.component.html",
+  styleUrls: ["./shader-list-item.component.css"],
 })
 export class ShaderListItemComponent {
-
   @Input() title: string;
   @Input() user: string;
   @Input() id: string;
@@ -16,10 +15,9 @@ export class ShaderListItemComponent {
   likeCount: number = 0;
 
   constructor() {
-    this.title = 'Shader';
-    this.user = 'User';
-    this.id = '';
-    this.previewImg = '';
+    this.title = "Shader";
+    this.user = "User";
+    this.id = "";
+    this.previewImg = "";
   }
-
 }
