@@ -18,48 +18,48 @@ import org.springframework.stereotype.Component;
 @Component
 public class TokenProvider {
 
-	@Value("${jwt.secret}")
-	private String secret;
+    @Value("${jwt.secret}")
+    private String secret;
 
-	public String generateJwtToken(User user) {
-		return JWT.create()
-				.withIssuedAt(new Date())
-				.withSubject(user.getId().toString())
-				.withExpiresAt(
-						new Date(System.currentTimeMillis() + SecurityConfig.EXPIRATION_TIME))
-				.sign(Algorithm.HMAC512(secret.getBytes()));
-	}
+    public String generateJwtToken(User user) {
+        return JWT.create()
+                .withIssuedAt(new Date())
+                .withSubject(user.getId().toString())
+                .withExpiresAt(
+                        new Date(System.currentTimeMillis() + SecurityConfig.EXPIRATION_TIME))
+                .sign(Algorithm.HMAC512(secret.getBytes()));
+    }
 
-	private JWTVerifier getJWTVerifier() {
-		JWTVerifier verifier;
-		try {
-			Algorithm algorithm = Algorithm.HMAC512(secret);
-			verifier = JWT.require(algorithm).build();
-		} catch (Exception e) {
-			throw new JWTVerificationException(SecurityConfig.TOKEN_NOT_VERIFIED_MESSAGE);
-		}
-		return verifier;
-	}
+    private JWTVerifier getJWTVerifier() {
+        JWTVerifier verifier;
+        try {
+            Algorithm algorithm = Algorithm.HMAC512(secret);
+            verifier = JWT.require(algorithm).build();
+        } catch (Exception e) {
+            throw new JWTVerificationException(SecurityConfig.TOKEN_NOT_VERIFIED_MESSAGE);
+        }
+        return verifier;
+    }
 
-	public Authentication getAuthentication(
-			String email, List<GrantedAuthority> authorities, HttpServletRequest request) {
-		UsernamePasswordAuthenticationToken authToken =
-				new UsernamePasswordAuthenticationToken(email, null, authorities);
-		authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-		return authToken;
-	}
+    public Authentication getAuthentication(
+            String email, List<GrantedAuthority> authorities, HttpServletRequest request) {
+        UsernamePasswordAuthenticationToken authToken =
+                new UsernamePasswordAuthenticationToken(email, null, authorities);
+        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return authToken;
+    }
 
-	public boolean isTokenValid(String token) {
-		return !getExpirationDate(token).before(new Date());
-	}
+    public boolean isTokenValid(String token) {
+        return !getExpirationDate(token).before(new Date());
+    }
 
-	public Date getExpirationDate(String token) {
-		JWTVerifier verifier = getJWTVerifier();
-		return verifier.verify(token).getExpiresAt();
-	}
+    public Date getExpirationDate(String token) {
+        JWTVerifier verifier = getJWTVerifier();
+        return verifier.verify(token).getExpiresAt();
+    }
 
-	public String getSubject(String token) {
-		JWTVerifier verifier = getJWTVerifier();
-		return verifier.verify(token).getSubject();
-	}
+    public String getSubject(String token) {
+        JWTVerifier verifier = getJWTVerifier();
+        return verifier.verify(token).getSubject();
+    }
 }

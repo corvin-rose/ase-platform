@@ -10,6 +10,6 @@ import lombok.Setter;
 @Builder
 public class Token {
 
-	private String token;
-	private Date expiresAt;
+    private String token;
+    private Date expiresAt;
 }

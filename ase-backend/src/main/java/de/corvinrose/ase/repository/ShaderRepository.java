@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ShaderRepository extends JpaRepository<Shader, UUID> {
 
-	void deleteShaderById(UUID id);
+    void deleteShaderById(UUID id);
 
-	Optional<Shader> findShaderById(UUID id);
+    Optional<Shader> findShaderById(UUID id);
 }

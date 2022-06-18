@@ -12,21 +12,21 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class UserService {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	public List<User> findAllUsers() {
-		return userRepository.findAll();
-	}
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
 
-	public User updateUser(User user) {
-		return userRepository.save(user);
-	}
+    public User updateUser(User user) {
+        return userRepository.save(user);
+    }
 
-	public Optional<User> findUserById(UUID id) {
-		return userRepository.findUserById(id);
-	}
+    public Optional<User> findUserById(UUID id) {
+        return userRepository.findUserById(id);
+    }
 
-	public void deleteUser(UUID id) {
-		userRepository.deleteUserById(id);
-	}
+    public void deleteUser(UUID id) {
+        userRepository.deleteUserById(id);
+    }
 }
