@@ -44,8 +44,10 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit {
       let shaderId: string = this.route.snapshot.params['id'];
       this.shaderService.getShaderById(shaderId).subscribe({
         next: (shader: Shader) => {
-          this.oldShaderCode = shader.shaderCode;
-          this.shader = shader.shaderCode;
+          if (shader.shaderCode !== undefined) {
+            this.oldShaderCode = shader.shaderCode;
+            this.shader = shader.shaderCode;
+          }
         },
         error: (error: HttpErrorResponse) => {
           this.errorService.showError(error);
@@ -91,7 +93,6 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result !== undefined && Auth.user !== null) {
         const shader: Shader = {
-          id: '',
           shaderCode: this.shader,
           title: result,
           authorId: Auth.user.id,
@@ -106,11 +107,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit {
               this.loading = false;
               this.router.navigate(['/shader', response.id, 'edit']);
             },
-            error: (error: HttpErrorResponse) => {
-              this.loading = false;
-              this.errorService.showError(error);
-              console.error(error.message);
-            }
+            error: (error) => this.disableLoadingAndProcessError(error)
           });
         }, 500);
       }
@@ -131,20 +128,18 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit {
               this.loading = false;
               this.oldShaderCode = this.shader;
             },
-            error: (error: HttpErrorResponse) => {
-              this.loading = false;
-              this.errorService.showError(error);
-              console.error(error.message);
-            }
+            error: (error) => this.disableLoadingAndProcessError(error)
           });
         },
-        error: (error: HttpErrorResponse) => {
-          this.loading = false;
-          this.errorService.showError(error);
-          console.error(error.message);
-        }
+        error: (error) => this.disableLoadingAndProcessError(error)
       })
     }, 500);
+  }
+
+  disableLoadingAndProcessError(error: HttpErrorResponse): void {
+    this.loading = false;
+    this.errorService.showError(error);
+    console.error(error.message);
   }
 
   onDeleteClick(): void {

@@ -31,19 +31,21 @@ export class ShaderViewerComponent implements OnInit {
     let shaderId: string = this.route.snapshot.params['id'];
     this.shaderService.getShaderById(shaderId).subscribe({
       next: (shader: Shader) => {
-        this.shaderCode = shader.shaderCode;
-        this.shaderTitle = shader.title;
-        this.userService.getUserById(shader.authorId).subscribe({
-          next: (user: User) => {
-            this.author = user.firstName + ' ' + user.lastName;
-          },
-          error: (error: HttpErrorResponse) => {
-            this.errorService.showError(error);
-            console.error(error.message);
+        if (shader.authorId !== undefined && shader.shaderCode !== undefined && shader.title !== undefined) {
+          this.shaderCode = shader.shaderCode;
+          this.shaderTitle = shader.title;
+          this.userService.getUserById(shader.authorId).subscribe({
+            next: (user: User) => {
+              this.author = user.firstName + ' ' + user.lastName;
+            },
+            error: (error: HttpErrorResponse) => {
+              this.errorService.showError(error);
+              console.error(error.message);
+            }
+          });
+          if (Auth.user?.id === shader.authorId) {
+            this.canEdit = true;
           }
-        });
-        if (Auth.user?.id === shader.authorId) {
-          this.canEdit = true;
         }
       },
       error: (error: HttpErrorResponse) => {

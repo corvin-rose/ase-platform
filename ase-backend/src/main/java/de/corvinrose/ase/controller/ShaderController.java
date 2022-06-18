@@ -7,6 +7,7 @@ import java.util.UUID;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -42,6 +43,7 @@ public class ShaderController {
 		return new ResponseEntity<>(updatedShader, HttpStatus.OK);
 	}
 
+	@Transactional
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<Shader> deleteShader(@PathVariable("id") UUID id) {
 		shaderService.deleteShader(id);

@@ -22,7 +22,9 @@ export class ShaderSettingsDialogComponent implements OnInit {
   ngOnInit(): void {
     this.shaderService.getShaderById(this.data).subscribe({
       next: (response: Shader) => {
-        this.title = response.title;
+        if (response.title !== undefined) {
+          this.title = response.title;
+        }
       },
       error: (error: HttpErrorResponse) => {
         this.errorService.showError(error);

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Token } from '../../../rest/model/token';
 import { User } from '../../../rest/model/user';
 import { AuthService } from '../../../rest/service/auth.service';
+import { ErrorService } from '../../../rest/service/error.service';
 import { UserService } from '../../../rest/service/user.service';
 
 @Component({
@@ -14,15 +15,15 @@ import { UserService } from '../../../rest/service/user.service';
 })
 export class LoginComponent {
 
-  constructor(private router: Router, private userService: UserService, private authService: AuthService) { }
+  constructor(private router: Router, 
+              private userService: UserService, 
+              private authService: AuthService,
+              private errorService: ErrorService) { }
   
   onSubmit(form: NgForm): void {
     if (!form.valid) return;
 
     const user: User = {
-      id: '',
-      firstName: '',
-      lastName: '',
       email: form.value.email,
       password: form.value.password
     }
@@ -34,6 +35,7 @@ export class LoginComponent {
         this.router.navigate(['/']);
       },
       error: (error: HttpErrorResponse) => {
+        this.errorService.showError(error);
         console.error('Login error', error.message);
       }
     });

@@ -16,11 +16,9 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .snackbar {
-    background: #fff;
+    background: var(--color-warn);
 }
 .snackbar span {
-    color: var(--color-warn);
-}
-.snackbar button > span {
-    color: var(--color-black);
+    color: #fff;
+    font-weight: 400;
 }

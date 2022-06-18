@@ -178,7 +178,9 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
       let shaderId: string = this.route.snapshot.params['id'];
       this.shaderService.getShaderById(shaderId).subscribe({
         next: (shader: Shader) => {
-          this.code = shader.shaderCode;
+          if (shader.shaderCode !== undefined) {
+            this.code = shader.shaderCode;
+          }
         },
         error: (error: HttpErrorResponse) => {
           this.code = '// Shader could not be loaded\n\n' + 

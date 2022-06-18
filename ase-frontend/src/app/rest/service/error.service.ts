@@ -2,6 +2,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+
+const DEFAULT_ERROR: string = 'A technical error has been occured';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -11,10 +14,10 @@ export class ErrorService {
 
   showError(httpError: HttpErrorResponse): void {
     let message = '';
-    if (httpError.error != null) {
+    if (httpError.error != undefined && httpError.error.error != undefined) {
       message = httpError.error.error + ': ' + httpError.error.message;
     } else {
-      message = httpError.message;
+      message = DEFAULT_ERROR;
     }
 
     this.snackBar.open(message, 'Close', {

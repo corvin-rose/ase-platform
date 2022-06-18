@@ -24,7 +24,11 @@ export class ProfileIconComponent {
   getProfileIconLetters(): string {
     if (Auth.user !== null) {
       let user: User = Auth.user;
-      return user.firstName.charAt(0) + user.lastName.charAt(0);
+      let fChar: string | undefined = user.firstName?.charAt(0);
+      let lChar: string | undefined = user.lastName?.charAt(0);
+      if (fChar !== undefined && lChar !== undefined) {
+        return fChar + lChar;
+      }
     }
     return "U";
   }

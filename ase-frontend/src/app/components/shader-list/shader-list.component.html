@@ -1,9 +1,9 @@
 <div class="shader-list">
     <app-shader-list-item 
         *ngFor="let s of shaders"
-        [id]="s.id + ''"
-        [title]="s.title"
-        [user]="authors.get(s.authorId) + ''"
-        [previewImg]="s.previewImg + ''">
+        [id]="getId(s)"
+        [title]="getTitle(s)"
+        [user]="getUsername(s)"
+        [previewImg]="getPreviewImg(s)">
     </app-shader-list-item>
 </div>

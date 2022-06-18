@@ -21,7 +21,6 @@ export class RegisterComponent {
     if (!form.valid) return;
 
     const user: User = {
-      id: '',
       firstName: form.value.firstName,
       lastName: form.value.lastName,
       email: form.value.email,
