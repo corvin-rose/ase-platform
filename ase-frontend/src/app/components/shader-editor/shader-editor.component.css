@@ -5,6 +5,15 @@
     width: 100%;
     height: var(--content-height);
 }
+@media (max-width: 832px) {
+    .content {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 20px;
+        width: 100%;
+        height: auto;
+    }
+}
 .shader-preview-container {
     display: flex;
     flex-direction: column;

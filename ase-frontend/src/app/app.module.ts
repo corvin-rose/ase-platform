@@ -29,6 +29,8 @@ import { AuthGuard } from "./guards/auth-guard";
 import { ShaderGuard } from "./guards/shader-guard";
 import { LeavePageGuard } from "./guards/leave-page-guard";
 import { ShaderLeaveDialogComponent } from "./components/shader-editor/shader-leave-dialog/shader-leave-dialog.component";
+import { SettingsComponent } from "./components/settings/settings.component";
+import { ProfileComponent } from "./components/profile/profile.component";
 
 @NgModule({
   declarations: [
@@ -48,6 +50,8 @@ import { ShaderLeaveDialogComponent } from "./components/shader-editor/shader-le
     ShaderDeleteDialogComponent,
     ShaderSettingsDialogComponent,
     ShaderLeaveDialogComponent,
+    SettingsComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserModule,

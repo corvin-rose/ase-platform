@@ -1,5 +1,38 @@
 .shader-list {
+    --flex-items-per-row: 10;
+    --flex-gap-size: 20px;
+
     display: flex;
-    gap: 20px;
+    gap: var(--flex-gap-size);
     flex-wrap: wrap;
+}
+@media (max-width: 720px) {
+    .shader-list { --flex-items-per-row: 1 }
+}
+@media (min-width: 720px) and (max-width: 1020px) {
+    .shader-list { --flex-items-per-row: 2 }
+}
+@media (min-width: 1020px) and (max-width: 1320px) {
+    .shader-list { --flex-items-per-row: 3 }
+}
+@media (min-width: 1320px) and (max-width: 1620px) {
+    .shader-list { --flex-items-per-row: 4 }
+}
+@media (min-width: 1620px) and (max-width: 1920px) {
+    .shader-list { --flex-items-per-row: 5 }
+}
+@media (min-width: 1920px) and (max-width: 2220px) {
+    .shader-list { --flex-items-per-row: 6 }
+}
+@media (min-width: 2220px) and (max-width: 2520px) {
+    .shader-list { --flex-items-per-row: 7 }
+}
+@media (min-width: 2520px) and (max-width: 2820px) {
+    .shader-list { --flex-items-per-row: 8 }
+}
+@media (min-width: 2820px) and (max-width: 3120px) {
+    .shader-list { --flex-items-per-row: 9 }
+}
+app-shader-list-item {
+    width: calc(100% / var(--flex-items-per-row) - (var(--flex-gap-size) * ((var(--flex-items-per-row) - 1) / var(--flex-items-per-row))));
 }

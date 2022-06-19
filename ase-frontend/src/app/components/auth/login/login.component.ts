@@ -32,8 +32,7 @@ export class LoginComponent {
     this.userService.loginUser(user).subscribe({
       next: (response: Token) => {
         this.authService.registerSuccessfulLogin(response.token);
-        // TODO: redirect to user profile
-        this.router.navigate(["/"]);
+        this.router.navigate(["/profile"]);
       },
       error: (error: HttpErrorResponse) => {
         this.errorService.showError(error);

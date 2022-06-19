@@ -1,0 +1,30 @@
+.profile-container {
+    padding-top: 50px;
+    width: min(90%, 900px);
+    margin: 0 auto;
+}
+.profile-container .details {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+.profile-container .details h2 {
+    margin: 0;
+}
+.icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid;
+    color: var(--color-black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.icon span {
+    font-size: 30px;
+    text-transform: uppercase;
+}
+.shader-overview {
+    margin-top: 70px;
+}

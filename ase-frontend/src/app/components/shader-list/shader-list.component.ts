@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ShaderService } from "../../rest/service/shader.service";
 import { Shader } from "../../rest/model/shader";
 import { User } from "../../rest/model/user";
@@ -20,6 +20,8 @@ export class ShaderListComponent implements OnInit {
   likes: Map<string, number> = new Map();
   currentUserLikes: Map<string, boolean> = new Map();
 
+  @Input() filter: string = "";
+
   constructor(
     private shaderService: ShaderService,
     private userService: UserService,
@@ -34,8 +36,10 @@ export class ShaderListComponent implements OnInit {
   getShaders(): void {
     this.shaderService.getShaders().subscribe({
       next: (response: Shader[]) => {
-        this.shaders = response;
-        this.getUsers(response.map((v) => (v.authorId ? v.authorId : "-1")));
+        this.shaders = response.filter((v) => this.matchesFilter(v));
+        this.getUsers(
+          this.shaders.map((v) => (v.authorId ? v.authorId : "-1"))
+        );
         this.getLikes();
       },
       error: (error: HttpErrorResponse) => {
@@ -126,5 +130,12 @@ export class ShaderListComponent implements OnInit {
       shaderId !== undefined &&
       this.currentUserLikes.get(shaderId) !== undefined
     );
+  }
+
+  matchesFilter(shader: Shader): boolean {
+    if (this.filter === "") {
+      return true;
+    }
+    return shader.authorId === this.filter;
   }
 }

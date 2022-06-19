@@ -6,6 +6,7 @@ import {
   EventEmitter,
   OnDestroy,
   Input,
+  ElementRef,
 } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { MonacoEditorLoaderService } from "@materia-ui/ngx-monaco-editor";
@@ -50,7 +51,8 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     private monacoLoaderService: MonacoEditorLoaderService,
     private route: ActivatedRoute,
     private shaderService: ShaderService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private elementRef: ElementRef
   ) {
     this.monacoLoaded = this.monacoLoaderService.isMonacoLoaded$.subscribe(
       () => {
@@ -370,11 +372,19 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
         },
       });
     }
+    this.elementRef.nativeElement.style.setProperty(
+      "--line-count",
+      this.code.split("\n").length
+    );
   }
 
   ngModelChanged(_code: string): void {
     this.needsUpdate = true;
     this.lastChange = new Date().getTime();
+    this.elementRef.nativeElement.style.setProperty(
+      "--line-count",
+      this.code.split("\n").length
+    );
   }
 
   ngOnDestroy(): void {

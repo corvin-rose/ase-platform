@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { Token } from "../model/token";
 import { User } from "../model/user";
 import { ErrorService } from "./error.service";
@@ -13,7 +14,8 @@ export class AuthService {
 
   constructor(
     private userService: UserService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private router: Router
   ) {
     Auth.token = localStorage.getItem(this.SESSION_FIELD);
     this.getUserAfterAuth();
@@ -36,20 +38,28 @@ export class AuthService {
     return token !== null;
   }
 
-  private getUserAfterAuth(): void {
+  getUserAfterAuth(): Promise<User | null> | null {
     if (Auth.token !== null) {
       const authToken: Token = {
         token: Auth.token,
       };
-      this.userService.authUser(authToken).subscribe({
-        next: (response: User) => {
-          Auth.user = response;
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorService.showError(error);
-          console.error(error.message);
-        },
+      return new Promise((resolve, reject) => {
+        this.userService.authUser(authToken).subscribe({
+          next: (response: User) => {
+            Auth.user = response;
+            resolve(response);
+          },
+          error: (error: HttpErrorResponse) => {
+            this.errorService.showError(error);
+            console.error(error.message);
+            resolve(null);
+            this.logout();
+            this.router.navigate(["/login"]);
+          },
+        });
       });
+    } else {
+      return null;
     }
   }
 }

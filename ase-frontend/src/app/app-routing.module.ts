@@ -5,6 +5,8 @@ import { ShaderEditorComponent } from "./components/shader-editor/shader-editor.
 import { LoginComponent } from "./components/auth/login/login.component";
 import { RegisterComponent } from "./components/auth/register/register.component";
 import { ShaderViewerComponent } from "./components/shader-viewer/shader-viewer.component";
+import { ProfileComponent } from "./components/profile/profile.component";
+import { SettingsComponent } from "./components/settings/settings.component";
 import { AuthGuard } from "./guards/auth-guard";
 import { ShaderGuard } from "./guards/shader-guard";
 import { LeavePageGuard } from "./guards/leave-page-guard";
@@ -29,6 +31,16 @@ const routes: Routes = [
     canActivate: [AuthGuard, ShaderGuard],
     canDeactivate: [LeavePageGuard],
     component: ShaderEditorComponent,
+  },
+  {
+    path: "profile",
+    canActivate: [AuthGuard],
+    component: ProfileComponent,
+  },
+  {
+    path: "settings",
+    canActivate: [AuthGuard],
+    component: SettingsComponent,
   },
   { path: "**", canActivate: [AuthGuard], component: ShaderListComponent },
 ];
