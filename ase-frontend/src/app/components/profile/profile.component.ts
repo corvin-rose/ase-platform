@@ -47,8 +47,9 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  getFilter(): string {
-    return Auth.user?.id ? Auth.user?.id : "-1";
+  getFilter(shader: Shader): boolean {
+    const user = Auth.user?.id ? Auth.user?.id : "-1";
+    return shader.authorId === user;
   }
 
   getUsername(): string {

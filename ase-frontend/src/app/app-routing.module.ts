@@ -13,6 +13,11 @@ import { LeavePageGuard } from "./guards/leave-page-guard";
 
 const routes: Routes = [
   { path: "", canActivate: [AuthGuard], component: ShaderListComponent },
+  {
+    path: "search/:query",
+    canActivate: [AuthGuard],
+    component: ShaderListComponent,
+  },
   { path: "login", component: LoginComponent },
   { path: "register", component: RegisterComponent },
   {

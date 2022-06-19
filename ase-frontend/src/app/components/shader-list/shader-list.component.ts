@@ -1,4 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from "@angular/core";
 import { ShaderService } from "../../rest/service/shader.service";
 import { Shader } from "../../rest/model/shader";
 import { User } from "../../rest/model/user";
@@ -8,6 +14,8 @@ import { ErrorService } from "../../rest/service/error.service";
 import { LikeService } from "../../rest/service/like.service";
 import { Like } from "../../rest/model/Like";
 import { Auth } from "../../rest/service/auth.service";
+import { ActivatedRoute } from "@angular/router";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-shader-list",
@@ -19,18 +27,32 @@ export class ShaderListComponent implements OnInit {
   authors: Map<string, string> = new Map();
   likes: Map<string, number> = new Map();
   currentUserLikes: Map<string, boolean> = new Map();
+  paramsSubscription: Subscription | null = null;
 
-  @Input() filter: string = "";
+  @Input() filter: (s: Shader) => boolean = () => true;
 
   constructor(
     private shaderService: ShaderService,
     private userService: UserService,
     private errorService: ErrorService,
-    private likeService: LikeService
+    private likeService: LikeService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.getShaders();
+
+    this.route.params.subscribe((params) => {
+      const query = params["query"];
+      if (query !== undefined) {
+        this.filter = (shader: Shader) => {
+          return (
+            shader.title?.toLowerCase().indexOf(query.toLowerCase()) !== -1
+          );
+        };
+        this.getShaders();
+      }
+    });
   }
 
   getShaders(): void {
@@ -133,9 +155,6 @@ export class ShaderListComponent implements OnInit {
   }
 
   matchesFilter(shader: Shader): boolean {
-    if (this.filter === "") {
-      return true;
-    }
-    return shader.authorId === this.filter;
+    return this.filter(shader);
   }
 }

@@ -1,11 +1,11 @@
-<form class="search-form">
+<form class="search-form" #searchForm="ngForm" (ngSubmit)="onSubmit()">
   <mat-form-field appearance="outline">
     <mat-label>Search</mat-label>
     <div class="search-icon" matPrefix>
       <mat-icon>search</mat-icon>
     </div>
-    <input class="search-input" type="text" name="search" matInput [(ngModel)]="searchValue">
-    <button *ngIf="searchValue" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
+    <input class="search-input" type="text" name="search" matInput [(ngModel)]="searchValue" (keydown.enter)="onSubmit()">
+    <button *ngIf="searchValue" type="button" matSuffix mat-icon-button aria-label="Clear" (click)="searchValue=''">
       <mat-icon>close</mat-icon>
     </button>
   </mat-form-field>

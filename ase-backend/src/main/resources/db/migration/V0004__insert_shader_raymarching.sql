@@ -2,7 +2,7 @@
 
 INSERT INTO shader (id, title, shader_code, author_id, created_at, preview_img)
 VALUES (
-    uuid_generate_v4(),
+    'e941bb54-c8e9-47d3-8a61-22d1fa4ed94c',
     'Raymarching Sphere',
     '
 #define MAX_STEPS 100
