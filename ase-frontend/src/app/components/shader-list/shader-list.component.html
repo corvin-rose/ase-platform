@@ -4,6 +4,8 @@
         [id]="getId(s)"
         [title]="getTitle(s)"
         [user]="getUsername(s)"
-        [previewImg]="getPreviewImg(s)">
+        [previewImg]="getPreviewImg(s)"
+        [likes]="getLikeCount(s.id)"
+        [userHasLiked]="getUserHasLikedShader(s.id)">
     </app-shader-list-item>
 </div>

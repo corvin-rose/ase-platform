@@ -5,5 +5,4 @@ export interface Shader {
   previewImg?: string;
   authorId?: string;
   createdAt?: Date;
-  likes?: number;
 }

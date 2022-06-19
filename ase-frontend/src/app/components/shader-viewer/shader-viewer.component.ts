@@ -1,10 +1,12 @@
 import { HttpErrorResponse } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
+import { Like } from "../../rest/model/Like";
 import { Shader } from "../../rest/model/shader";
 import { User } from "../../rest/model/user";
 import { Auth } from "../../rest/service/auth.service";
 import { ErrorService } from "../../rest/service/error.service";
+import { LikeService } from "../../rest/service/like.service";
 import { ShaderService } from "../../rest/service/shader.service";
 import { UserService } from "../../rest/service/user.service";
 
@@ -18,15 +20,15 @@ export class ShaderViewerComponent implements OnInit {
   shaderTitle: string = "Title";
   shaderId: string = "00000000-0000-0000-0000-000000000000";
   author: string = "Author";
-  like: boolean = false;
-  likeCount: number = 0;
+  likes: string[] = [];
   canEdit: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
     private shaderService: ShaderService,
     private userService: UserService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private likeService: LikeService
   ) {}
 
   ngOnInit(): void {
@@ -44,20 +46,73 @@ export class ShaderViewerComponent implements OnInit {
             next: (user: User) => {
               this.author = user.firstName + " " + user.lastName;
             },
-            error: (error: HttpErrorResponse) => {
-              this.errorService.showError(error);
-              console.error(error.message);
-            },
+            error: (error) => this.handleError(error),
           });
           if (Auth.user?.id === shader.authorId) {
             this.canEdit = true;
           }
         }
+        if (shader.id !== undefined) {
+          this.likeService.getAllLikesByShaderId(shader.id).subscribe({
+            next: (response: string[]) => {
+              this.likes = response;
+            },
+            error: (error) => this.handleError(error),
+          });
+        }
       },
-      error: (error: HttpErrorResponse) => {
-        this.errorService.showError(error);
-        console.error(error.message);
-      },
+      error: (error) => this.handleError(error),
     });
+  }
+
+  handleError(error: HttpErrorResponse): void {
+    this.errorService.showError(error);
+    console.error(error.message);
+  }
+
+  getLikeCount(): number {
+    return this.likes.length;
+  }
+
+  activeUserHasLiked(): boolean {
+    if (Auth.user?.id !== undefined) {
+      return this.likes.includes(Auth.user?.id);
+    } else {
+      return false;
+    }
+  }
+
+  likeClick(): void {
+    if (Auth.user?.id !== undefined) {
+      const like: Like = {
+        shaderId: this.shaderId,
+        userId: Auth.user?.id,
+      };
+      this.likeService.addLike(like).subscribe({
+        next: () => {
+          if (Auth.user?.id !== undefined) {
+            this.likes.push(Auth.user?.id);
+          }
+        },
+        error: (error) => this.handleError(error),
+      });
+    }
+  }
+
+  unlikeClick(): void {
+    if (Auth.user?.id !== undefined) {
+      const like: Like = {
+        shaderId: this.shaderId,
+        userId: Auth.user?.id,
+      };
+      this.likeService.deleteLike(like).subscribe({
+        next: () => {
+          if (Auth.user?.id !== undefined) {
+            this.likes.splice(this.likes.indexOf(Auth.user?.id), 1);
+          }
+        },
+        error: (error) => this.handleError(error),
+      });
+    }
   }
 }

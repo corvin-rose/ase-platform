@@ -5,6 +5,9 @@ import { User } from "../../rest/model/user";
 import { HttpErrorResponse } from "@angular/common/http";
 import { UserService } from "../../rest/service/user.service";
 import { ErrorService } from "../../rest/service/error.service";
+import { LikeService } from "../../rest/service/like.service";
+import { Like } from "../../rest/model/Like";
+import { Auth } from "../../rest/service/auth.service";
 
 @Component({
   selector: "app-shader-list",
@@ -14,11 +17,14 @@ import { ErrorService } from "../../rest/service/error.service";
 export class ShaderListComponent implements OnInit {
   shaders: Shader[] = [];
   authors: Map<string, string> = new Map();
+  likes: Map<string, number> = new Map();
+  currentUserLikes: Map<string, boolean> = new Map();
 
   constructor(
     private shaderService: ShaderService,
     private userService: UserService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private likeService: LikeService
   ) {}
 
   ngOnInit(): void {
@@ -30,6 +36,7 @@ export class ShaderListComponent implements OnInit {
       next: (response: Shader[]) => {
         this.shaders = response;
         this.getUsers(response.map((v) => (v.authorId ? v.authorId : "-1")));
+        this.getLikes();
       },
       error: (error: HttpErrorResponse) => {
         this.errorService.showError(error);
@@ -48,6 +55,34 @@ export class ShaderListComponent implements OnInit {
               this.authors.set(user.id, user.firstName + " " + user.lastName);
             }
           });
+      },
+      error: (error: HttpErrorResponse) => {
+        this.errorService.showError(error);
+        console.error(error.message);
+      },
+    });
+  }
+
+  getLikes(): void {
+    this.likeService.getAllLikes().subscribe({
+      next: (response: Like[]) => {
+        this.likes = response
+          .filter((v) => v.userId !== Auth.user?.id)
+          .map((v) => v.shaderId)
+          .reduce((map, cur) => {
+            let val = map.get(cur);
+            if (val !== undefined) {
+              map.set(cur, ++val);
+            } else {
+              map.set(cur, 1);
+            }
+            return map;
+          }, new Map<string, number>());
+        this.currentUserLikes = response
+          .filter((v) => v.userId === Auth.user?.id)
+          .reduce((map, cur) => {
+            return map.set(cur.shaderId, true);
+          }, new Map<string, boolean>());
       },
       error: (error: HttpErrorResponse) => {
         this.errorService.showError(error);
@@ -78,5 +113,18 @@ export class ShaderListComponent implements OnInit {
     return shader.previewImg
       ? shader.previewImg
       : "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+  }
+
+  getLikeCount(shaderId: string | undefined): number {
+    if (shaderId === undefined) return 0;
+    let count = this.likes.get(shaderId);
+    return count ? count : 0;
+  }
+
+  getUserHasLikedShader(shaderId: string | undefined): boolean {
+    return (
+      shaderId !== undefined &&
+      this.currentUserLikes.get(shaderId) !== undefined
+    );
   }
 }

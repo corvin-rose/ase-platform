@@ -5,7 +5,6 @@ CREATE TABLE shader (
     preview_img     TEXT,
     author_id       UUID NOT NULL REFERENCES ase_user,
     created_at      DATE NOT NULL,
-    likes           INTEGER DEFAULT 0,
     PRIMARY KEY (id)
 );
 

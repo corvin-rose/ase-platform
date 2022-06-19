@@ -11,12 +11,12 @@
         <mat-card-title>{{ title }}</mat-card-title>
         <mat-card-subtitle>{{ user }}</mat-card-subtitle>
         <div class="like-btn">
-            <span>{{ likeCount }}</span>
-            <button *ngIf="like; else notLiked" mat-icon-button color="warn" aria-label="Like button" (click)="like=false">
+            <span>{{ getLikeCount() }}</span>
+            <button *ngIf="userHasLiked; else notLiked" mat-icon-button color="warn" aria-label="Like button" (click)="unlikeClick()">
                 <mat-icon>favorite</mat-icon>
             </button>
             <ng-template #notLiked>
-                <button mat-icon-button aria-label="Like button" (click)="like=true">
+                <button mat-icon-button aria-label="Like button" (click)="likeClick()">
                     <mat-icon>favorite_border</mat-icon>
                 </button>
             </ng-template>
