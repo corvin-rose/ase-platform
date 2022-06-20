@@ -27,10 +27,10 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   time: number = 0;
   program: any = null;
   size: { x: number; y: number } = { x: 0, y: 0 };
-  vertexBuffer: number = 0;
-  indexBuffer: number = 0;
+  vertexBuffer: WebGLBuffer | null = 0;
+  indexBuffer: WebGLBuffer | null = 0;
   compilerId: number = 0;
-  shaderLineOffset: number = 6;
+  shaderLineOffset: number = 0;
 
   constructor() {
     this.shader = "";
@@ -53,22 +53,51 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     canvas.width = 640;
     canvas.height = 320;
     this.size = { x: canvas.width, y: canvas.height };
-    const gl = canvas.getContext("webgl2", { preserveDrawingBuffer: true });
 
-    const vShaderSrc = `#version 300 es
+    let webgl2 = canvas.getContext("webgl2", { preserveDrawingBuffer: true });
+    let webgl2exp = canvas.getContext("experimental-webgl2", {
+      preserveDrawingBuffer: true,
+    });
+    let webgl = canvas.getContext("webgl", { preserveDrawingBuffer: true });
+    let webglexp = canvas.getContext("experimental-webgl", {
+      preserveDrawingBuffer: true,
+    });
+
+    const gl: WebGL2RenderingContext | WebGLRenderingContext =
+      webgl2 || webgl2exp || webgl || webglexp;
+    if (gl === null) {
+      this.sendErrors([
+        "Error compiling shader",
+        "WebGL is not supported on your device",
+      ]);
+      console.error("WebGL could not be loaded");
+      return;
+    }
+
+    const shaderVersion =
+      gl instanceof WebGL2RenderingContext
+        ? "#version 300 es"
+        : "#define in attribute";
+    const vShaderSrc = `${shaderVersion}
                         precision highp float;
                         in vec2 position;
                         void main()	{
                             gl_Position = vec4(position, 0.0, 0.0);
                         }`;
 
-    const fShaderSrc = `#version 300 es
-                        precision highp float;
-                        uniform vec2 RESOLUTION;
-                        uniform float TIME;
-                        out vec4 fragColor;
-                        #define gl_FragColor fragColor
+    const colorDef =
+      gl instanceof WebGL2RenderingContext
+        ? "out vec4 fragColor;\n#define gl_FragColor fragColor"
+        : "";
+    const fShaderSetup = `${shaderVersion}
+                          precision highp float;
+                          uniform vec2 RESOLUTION;
+                          uniform float TIME;
+                          ${colorDef}`;
+    const fShaderSrc = `${fShaderSetup}
                         ${this.shader}`;
+
+    this.shaderLineOffset = fShaderSetup.split("\n").length;
 
     const vertexBufferData: Float32Array = new Float32Array([
       -0.5,
@@ -96,11 +125,13 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-    this.program = this.createProgram(
-      gl,
-      this.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER),
-      this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER)
-    );
+    const fragShader = this.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER);
+    const vertShader = this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
+    if (fragShader === null || vertShader === null) {
+      console.error("Error while creating shaders", fragShader, vertShader);
+      return;
+    }
+    this.program = this.createProgram(gl, fragShader, vertShader);
     gl.useProgram(this.program);
     gl.clearColor(0, 0, 0, 1);
     gl.viewport(0, 0, this.size.x, this.size.y);
@@ -144,7 +175,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     requestAnimationFrame(loop);
   }
 
-  render(gl: any): void {
+  render(gl: WebGL2RenderingContext | WebGLRenderingContext): void {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     const positionAttrib: number = gl.getAttribLocation(
@@ -153,12 +184,15 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     );
     gl.enableVertexAttribArray(positionAttrib);
 
-    const resolutionLoc: number = gl.getUniformLocation(
+    const resolutionLoc: WebGLUniformLocation | null = gl.getUniformLocation(
       this.program,
       "RESOLUTION"
     );
     gl.uniform2f(resolutionLoc, this.size.x, this.size.y);
-    const timeLoc: number = gl.getUniformLocation(this.program, "TIME");
+    const timeLoc: WebGLUniformLocation | null = gl.getUniformLocation(
+      this.program,
+      "TIME"
+    );
     gl.uniform1f(timeLoc, this.time);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
@@ -167,31 +201,48 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
   }
 
-  createShader(gl: any, src: string, type: any) {
-    let shader = gl.createShader(type);
+  createShader(
+    gl: WebGL2RenderingContext | WebGLRenderingContext,
+    src: string,
+    type: number
+  ): WebGLShader | null {
+    let shader: WebGLShader | null = gl.createShader(type);
+    if (shader === null) {
+      console.error("Error creating shader from gl instance.");
+      return null;
+    }
+
     gl.shaderSource(shader, src);
     gl.compileShader(shader);
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      let error = gl.getShaderInfoLog(shader);
       this.sendErrors([
         "Error compiling shader",
-        gl
-          .getShaderInfoLog(shader)
-          .replace(
-            /(ERROR: [0-9]+:)([0-9]+)/g,
-            (_: any, g1: string, g2: string) => {
-              return g1 + (parseInt(g2) - this.shaderLineOffset);
-            }
-          ),
+        (error ? error : "").replace(
+          /(ERROR: [0-9]+:)([0-9]+)/g,
+          (_: any, g1: string, g2: string) => {
+            return g1 + (parseInt(g2) - this.shaderLineOffset);
+          }
+        ),
       ]);
+      console.error(error);
       gl.deleteShader(shader);
       return null;
     }
     return shader;
   }
 
-  createProgram(gl: any, vShader: any, fShader: any) {
-    let prog = gl.createProgram();
+  createProgram(
+    gl: WebGL2RenderingContext | WebGLRenderingContext,
+    vShader: WebGLShader,
+    fShader: WebGLShader
+  ) {
+    let prog: WebGLProgram | null = gl.createProgram();
+    if (prog === null) {
+      console.error("Error creating shader program from gl instance.");
+      return;
+    }
     gl.attachShader(prog, vShader);
     gl.attachShader(prog, fShader);
     gl.linkProgram(prog);
