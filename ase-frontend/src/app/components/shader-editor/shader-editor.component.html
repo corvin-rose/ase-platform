@@ -4,7 +4,7 @@
         <app-shader-renderer [shader]="shader" (onMessage)="onMessage($event)" (onCompile)="onCompile($event)"></app-shader-renderer>
         <app-shader-console [containerHeight]="consoleContainerHeight" [messages]="messages"></app-shader-console>
         <div #buttonContainer>
-            <div *ngIf="editMode" class="button-container">
+            <div id="edit-container" *ngIf="editMode" class="button-container">
                 <button 
                     *ngIf="!loading"
                     mat-raised-button 
@@ -22,7 +22,7 @@
                 <button mat-raised-button (click)="onSettingsClick()">Settings</button>
             </div>
             
-            <div *ngIf="!editMode" class="button-container">
+            <div id="create-container" *ngIf="!editMode" class="button-container">
                 <button 
                     *ngIf="!loading"
                     mat-raised-button 

@@ -1,4 +1,9 @@
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { RouterTestingModule } from "@angular/router/testing";
+import { MaterialModule } from "../../../modules/material/material.module";
 
 import { LoginComponent } from "./login.component";
 
@@ -9,6 +14,14 @@ describe("LoginComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [LoginComponent],
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        MaterialModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NoopAnimationsModule,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);

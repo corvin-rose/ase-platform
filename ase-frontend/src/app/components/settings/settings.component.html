@@ -3,16 +3,16 @@
     <form #saveForm="ngForm" (ngSubmit)="onSubmit(saveForm)">
         <mat-form-field appearance="outline">
             <mat-label>Email</mat-label>
-            <input matInput type="email" name="email" [(ngModel)]="email" disabled>
+            <input id="email" matInput type="email" name="email" [(ngModel)]="email" disabled>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>First Name</mat-label>
-            <input matInput type="text" name="firstName" minlength="3" [(ngModel)]="firstName" required>
+            <input id="firstName" matInput type="text" name="firstName" minlength="3" [(ngModel)]="firstName" required>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Last Name</mat-label>
-            <input matInput type="text" name="lastName" minlength="3" [(ngModel)]="lastName" required>
+            <input id="lastName" matInput type="text" name="lastName" minlength="3" [(ngModel)]="lastName" required>
         </mat-form-field>
-        <button mat-raised-button type="submit" color="primary" [disabled]="!valuesChanged() || !saveForm.valid">Save</button>
+        <button id="save-btn" mat-raised-button type="submit" color="primary" [disabled]="!valuesChanged() || !saveForm.valid">Save</button>
     </form>
 </div>

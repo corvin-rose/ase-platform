@@ -50,6 +50,7 @@ export class ShaderEditorComponent
   ) {}
 
   ngOnInit(): void {
+    console.log(this.route.snapshot);
     let path: string = "/" + this.route.snapshot.url.join("/");
     if (path !== "/shader/new") {
       this.editMode = true;
