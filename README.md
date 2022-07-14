@@ -29,6 +29,8 @@ For the frontend run `ng serve` inside `/ase-platform/ase-frontend`<br>
 (make sure you have angular CLI installed > `npm install -g @angular/cli`)
 
 
+<br><br>
+
 ### General Information
 1. This application still lacks some security measures regarding the users data and their authentication
 2. This application runs with WebGL, therefore some devices may not be able to display the application properly. I have tried to cover all devices as good as possible
@@ -38,15 +40,17 @@ For the frontend run `ng serve` inside `/ase-platform/ase-frontend`<br>
   * Login (POST)
   * Register (POST)
   * Profile (GET)
+  * Settings (PATCH)
 * Shader
   * Create (POST)
   * Edit (PUT)
   * Render
   * Delete (DELETE)
-  * Settings (PUT)
+  * Settings (PATCH)
 * Like Shaders (GET, POST)
 * Search
 
+<br><br>
 
 ### Small guide on shaders
 ```

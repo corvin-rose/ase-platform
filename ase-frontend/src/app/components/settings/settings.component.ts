@@ -48,7 +48,7 @@ export class SettingsComponent implements OnInit {
       password: Auth.user?.password,
     };
 
-    this.userService.updateUser(user).subscribe({
+    this.userService.patchUser(user).subscribe({
       next: () => {
         this.authService.getUserAfterAuth()?.then((user) => {
           this.firstName = user?.firstName ? user.firstName : "";

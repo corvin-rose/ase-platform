@@ -63,6 +63,11 @@ public class UserController {
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    @PatchMapping("/update")
+    public ResponseEntity<User> patchUser(@RequestBody User user) {
+        return updateUser(user);
+    }
+
     @Transactional
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable("id") UUID id) {

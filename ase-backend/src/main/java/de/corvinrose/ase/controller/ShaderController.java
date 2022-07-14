@@ -48,6 +48,11 @@ public class ShaderController {
         return new ResponseEntity<>(updatedShader, HttpStatus.OK);
     }
 
+    @PatchMapping("/update")
+    public ResponseEntity<Shader> patchUser(@RequestBody Shader shader) {
+        return updateShader(shader);
+    }
+
     @Transactional
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Shader> deleteShader(@PathVariable("id") UUID id) {

@@ -43,7 +43,7 @@ export class ShaderSettingsDialogComponent implements OnInit {
         }
 
         response.title = this.title;
-        this.shaderService.updateShader(response).subscribe({
+        this.shaderService.patchShader(response).subscribe({
           next: () => {
             this.dialogRef.close();
           },
