@@ -29,7 +29,10 @@ export class ShaderService {
   }
 
   public patchShader(shader: Shader): Observable<Shader> {
-    return this.http.patch<Shader>(`${this.apiServerUrl}/shader/update`, shader);
+    return this.http.patch<Shader>(
+      `${this.apiServerUrl}/shader/update`,
+      shader
+    );
   }
 
   public deleteShader(shaderId: string): Observable<Shader> {

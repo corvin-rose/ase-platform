@@ -59,16 +59,16 @@
               <goal>exec</goal>
             </goals>
             <phase>test</phase>
-            <configuration>
-              <executable>npm</executable>
-              <arguments>
-                <argument>test</argument>
-                <argument>--</argument>
-                <argument>--watch=false</argument>
-              </arguments>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <executable>npm</executable>
+          <arguments>
+            <argument>test</argument>
+            <argument>--</argument>
+            <argument>--watch=false</argument>
+          </arguments>
+        </configuration>
       </plugin>
     </plugins>
   </build>
