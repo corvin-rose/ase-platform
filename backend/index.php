@@ -2,6 +2,7 @@
 
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Methods: *");
 
 ini_set("log_errors", 1);
 ini_set("error_log", "php-error.log");

@@ -1,20 +1,22 @@
-import { HttpErrorResponse } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
-import { NgForm } from "@angular/forms";
-import { User } from "../../rest/model/user";
-import { Auth, AuthService } from "../../rest/service/auth.service";
-import { ErrorService } from "../../rest/service/error.service";
-import { UserService } from "../../rest/service/user.service";
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { User } from '../../rest/model/user';
+import { Auth, AuthService } from '../../rest/service/auth.service';
+import { ErrorService } from '../../rest/service/error.service';
+import { UserService } from '../../rest/service/user.service';
 
 @Component({
-  selector: "app-settings",
-  templateUrl: "./settings.component.html",
-  styleUrls: ["./settings.component.css"],
+  selector: 'app-settings',
+  templateUrl: './settings.component.html',
+  styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit {
-  firstName: string = "";
-  lastName: string = "";
-  email: string = "";
+  firstName: string = '';
+  lastName: string = '';
+  email: string = '';
+
+  user: User | null = null;
 
   constructor(
     private authService: AuthService,
@@ -24,35 +26,33 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.getUserAfterAuth()?.then((user) => {
-      this.firstName = user?.firstName ? user.firstName : "";
-      this.lastName = user?.lastName ? user.lastName : "";
-      this.email = user?.email ? user.email : "";
+      this.user = user;
+      this.firstName = user?.firstName ? user.firstName : '';
+      this.lastName = user?.lastName ? user.lastName : '';
+      this.email = user?.email ? user.email : '';
     });
   }
 
   valuesChanged(): boolean {
-    return (
-      Auth.user?.firstName !== this.firstName ||
-      Auth.user.lastName !== this.lastName
-    );
+    return this.user?.firstName !== this.firstName || this.user.lastName !== this.lastName;
   }
 
   onSubmit(form: NgForm): void {
     if (!form.valid) return;
 
     const user: User = {
-      id: Auth.user?.id,
+      id: this.user?.id,
       firstName: form.value.firstName,
       lastName: form.value.lastName,
       email: this.email,
-      password: Auth.user?.password,
+      password: this.user?.password,
     };
 
     this.userService.patchUser(user).subscribe({
       next: () => {
         this.authService.getUserAfterAuth()?.then((user) => {
-          this.firstName = user?.firstName ? user.firstName : "";
-          this.lastName = user?.lastName ? user.lastName : "";
+          this.firstName = user?.firstName ? user.firstName : '';
+          this.lastName = user?.lastName ? user.lastName : '';
         });
       },
       error: (error: HttpErrorResponse) => {

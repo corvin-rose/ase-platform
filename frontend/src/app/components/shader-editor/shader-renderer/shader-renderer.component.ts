@@ -23,8 +23,10 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   @Input() shader: string;
 
   time: number = 0;
+  frame: number = 0;
   program: any = null;
   size: { x: number; y: number } = { x: 0, y: 0 };
+  mousePos: { x: number; y: number } = { x: 0, y: 0 };
   vertexBuffer: WebGLBuffer | null = 0;
   indexBuffer: WebGLBuffer | null = 0;
   compilerId: number = 0;
@@ -44,6 +46,8 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
   compileShaders(): void {
     this.time = 0;
+    this.frame = 0;
+    this.mousePos = { x: 0, y: 0 };
     this.compilerId += 1;
     let currentCompiler: number = this.compilerId;
 
@@ -51,6 +55,11 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     canvas.width = 640;
     canvas.height = 320;
     this.size = { x: canvas.width, y: canvas.height };
+
+    canvas.addEventListener('mousedown', (event: MouseEvent) => {
+      this.mousePos.x = event.offsetX / canvas.clientWidth;
+      this.mousePos.y = event.offsetY / canvas.clientHeight;
+    });
 
     const options = { preserveDrawingBuffer: true };
 
@@ -91,6 +100,8 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
                           #endif
                           uniform vec2 RESOLUTION;
                           uniform float TIME;
+                          uniform int FRAME;
+                          uniform vec2 MOUSE;
                           ${colorDef}`;
     const fShaderSrc = `${fShaderSetup}
                         ${this.shader}`;
@@ -145,6 +156,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
       currentTime = new Date();
       let deltaTime: number = (currentTime - lastTime) / 1000;
       this.time += deltaTime;
+      this.frame += 1;
 
       this.render(gl);
       if (currentCompiler === this.compilerId) requestAnimationFrame(loop);
@@ -167,6 +179,10 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.uniform2f(resolutionLoc, this.size.x, this.size.y);
     const timeLoc: WebGLUniformLocation | null = gl.getUniformLocation(this.program, 'TIME');
     gl.uniform1f(timeLoc, this.time);
+    const frameLoc: WebGLUniformLocation | null = gl.getUniformLocation(this.program, 'FRAME');
+    gl.uniform1i(frameLoc, this.frame);
+    const mouseLoc: WebGLUniformLocation | null = gl.getUniformLocation(this.program, 'MOUSE');
+    gl.uniform2f(mouseLoc, this.mousePos.x, this.mousePos.y);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);

@@ -1,20 +1,20 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { User } from "../../rest/model/user";
-import { Auth } from "../../rest/service/auth.service";
-import { LikeService } from "../../rest/service/like.service";
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { User } from '../../rest/model/user';
+import { Auth } from '../../rest/service/auth.service';
+import { LikeService } from '../../rest/service/like.service';
 
-import { ProfileComponent } from "./profile.component";
-import { MaterialModule } from "../../modules/material/material.module";
+import { ProfileComponent } from './profile.component';
+import { MaterialModule } from '../../modules/material/material.module';
 
-describe("ProfileComponent", () => {
+describe('ProfileComponent', () => {
   let component: ProfileComponent;
   let compiled: HTMLElement;
   let fixture: ComponentFixture<ProfileComponent>;
 
   const testUser: User = {
-    firstName: "Test",
-    lastName: "User",
+    firstName: 'Test',
+    lastName: 'User',
   };
 
   beforeEach(async () => {
@@ -24,7 +24,7 @@ describe("ProfileComponent", () => {
       providers: [LikeService],
     }).compileComponents();
 
-    Auth.user = testUser;
+    // Auth.user = testUser;
 
     fixture = TestBed.createComponent(ProfileComponent);
     component = fixture.componentInstance;
@@ -32,12 +32,12 @@ describe("ProfileComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should create", () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it("should display user", () => {
-    expect(compiled.querySelector("#name")?.textContent).toBe("Test User");
-    expect(compiled.querySelector("#profile-icon")?.textContent).toBe("TU");
+  it('should display user', () => {
+    expect(compiled.querySelector('#name')?.textContent).toBe('Test User');
+    expect(compiled.querySelector('#profile-icon')?.textContent).toBe('TU');
   });
 });

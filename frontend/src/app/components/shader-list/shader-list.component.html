@@ -1,11 +1,12 @@
 <div class="shader-list">
-    <app-shader-list-item 
-        *ngFor="let s of shaders"
-        [id]="getId(s)"
-        [title]="getTitle(s)"
-        [user]="getUsername(s)"
-        [previewImg]="getPreviewImg(s)"
-        [likes]="getLikeCount(s.id)"
-        [userHasLiked]="getUserHasLikedShader(s.id)">
-    </app-shader-list-item>
+  <app-shader-list-item
+    *ngFor="let s of shaders"
+    [id]="getId(s)"
+    [title]="getTitle(s)"
+    [userName]="getUsername(s)"
+    [previewImg]="getPreviewImg(s)"
+    [likes]="getLikeCount(s.id)"
+    [userHasLiked]="getUserHasLikedShader(s.id)"
+  >
+  </app-shader-list-item>
 </div>

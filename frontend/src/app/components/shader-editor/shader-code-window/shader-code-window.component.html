@@ -1,4 +1,13 @@
 <div class="editor-container">
-    <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code" (ngModelChange)="ngModelChanged($event)"></ngx-monaco-editor>
-    <div class="mobile-scroll"></div>
+  <ngx-monaco-editor
+    class="editor"
+    [options]="editorOptions"
+    [(ngModel)]="code"
+    (ngModelChange)="ngModelChanged($event)"
+  ></ngx-monaco-editor>
+  <div class="mobile-scroll"></div>
+
+  <div *ngIf="loading" class="loader">
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
 </div>

@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Like } from '../../rest/model/Like';
 import { Shader } from '../../rest/model/shader';
 import { User } from '../../rest/model/user';
-import { Auth } from '../../rest/service/auth.service';
+import { Auth, AuthService } from '../../rest/service/auth.service';
 import { ErrorService } from '../../rest/service/error.service';
 import { LikeService } from '../../rest/service/like.service';
 import { ShaderService } from '../../rest/service/shader.service';
@@ -23,46 +23,51 @@ export class ShaderViewerComponent implements OnInit {
   likes: string[] = [];
   canEdit: boolean = false;
 
+  user: User | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private shaderService: ShaderService,
     private userService: UserService,
     private errorService: ErrorService,
-    private likeService: LikeService
+    private likeService: LikeService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.shaderId = this.route.snapshot.params['id'];
-    this.shaderService.getShaderById(this.shaderId).subscribe({
-      next: (shader: Shader) => {
-        if (
-          shader.authorId !== undefined &&
-          shader.shaderCode !== undefined &&
-          shader.title !== undefined
-        ) {
-          this.shaderCode = shader.shaderCode;
-          this.shaderTitle = shader.title;
-          this.userService.getUserById(shader.authorId).subscribe({
-            next: (user: User) => {
-              this.author = user.firstName + ' ' + user.lastName;
-            },
-            error: (error) => this.handleError(error),
-          });
-          if (Auth.user?.id === shader.authorId) {
-            // TODO: edit is not showing after refresh
-            this.canEdit = true;
+    this.authService.getUserAfterAuth()?.then((user) => {
+      this.user = user;
+      this.shaderService.getShaderById(this.shaderId).subscribe({
+        next: (shader: Shader) => {
+          if (
+            shader.authorId !== undefined &&
+            shader.shaderCode !== undefined &&
+            shader.title !== undefined
+          ) {
+            this.shaderCode = shader.shaderCode;
+            this.shaderTitle = shader.title;
+            this.userService.getUserById(shader.authorId).subscribe({
+              next: (user: User) => {
+                this.author = user.firstName + ' ' + user.lastName;
+              },
+              error: (error) => this.handleError(error),
+            });
+            if (this.user?.id === shader.authorId) {
+              this.canEdit = true;
+            }
           }
-        }
-        if (shader.id !== undefined) {
-          this.likeService.getAllLikesByShaderId(shader.id).subscribe({
-            next: (response: string[]) => {
-              this.likes = response;
-            },
-            error: (error) => this.handleError(error),
-          });
-        }
-      },
-      error: (error) => this.handleError(error),
+          if (shader.id !== undefined) {
+            this.likeService.getAllLikesByShaderId(shader.id).subscribe({
+              next: (response: string[]) => {
+                this.likes = response;
+              },
+              error: (error) => this.handleError(error),
+            });
+          }
+        },
+        error: (error) => this.handleError(error),
+      });
     });
   }
 
@@ -76,23 +81,23 @@ export class ShaderViewerComponent implements OnInit {
   }
 
   activeUserHasLiked(): boolean {
-    if (Auth.user?.id !== undefined) {
-      return this.likes.includes(Auth.user?.id);
+    if (this.user?.id !== undefined) {
+      return this.likes.includes(this.user?.id);
     } else {
       return false;
     }
   }
 
   likeClick(): void {
-    if (Auth.user?.id !== undefined) {
+    if (this.user?.id !== undefined) {
       const like: Like = {
         shaderId: this.shaderId,
-        userId: Auth.user?.id,
+        userId: this.user?.id,
       };
       this.likeService.addLike(like).subscribe({
         next: () => {
-          if (Auth.user?.id !== undefined) {
-            this.likes.push(Auth.user?.id);
+          if (this.user?.id !== undefined) {
+            this.likes.push(this.user?.id);
           }
         },
         error: (error) => this.handleError(error),
@@ -101,15 +106,15 @@ export class ShaderViewerComponent implements OnInit {
   }
 
   unlikeClick(): void {
-    if (Auth.user?.id !== undefined) {
+    if (this.user?.id !== undefined) {
       const like: Like = {
         shaderId: this.shaderId,
-        userId: Auth.user?.id,
+        userId: this.user?.id,
       };
       this.likeService.deleteLike(like).subscribe({
         next: () => {
-          if (Auth.user?.id !== undefined) {
-            this.likes.splice(this.likes.indexOf(Auth.user?.id), 1);
+          if (this.user?.id !== undefined) {
+            this.likes.splice(this.likes.indexOf(this.user?.id), 1);
           }
         },
         error: (error) => this.handleError(error),

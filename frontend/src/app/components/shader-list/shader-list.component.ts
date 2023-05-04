@@ -1,26 +1,20 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
-import { ShaderService } from "../../rest/service/shader.service";
-import { Shader } from "../../rest/model/shader";
-import { User } from "../../rest/model/user";
-import { HttpErrorResponse } from "@angular/common/http";
-import { UserService } from "../../rest/service/user.service";
-import { ErrorService } from "../../rest/service/error.service";
-import { LikeService } from "../../rest/service/like.service";
-import { Like } from "../../rest/model/Like";
-import { Auth } from "../../rest/service/auth.service";
-import { ActivatedRoute } from "@angular/router";
-import { Subscription } from "rxjs";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { ShaderService } from '../../rest/service/shader.service';
+import { Shader } from '../../rest/model/shader';
+import { User } from '../../rest/model/user';
+import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../../rest/service/user.service';
+import { ErrorService } from '../../rest/service/error.service';
+import { LikeService } from '../../rest/service/like.service';
+import { Like } from '../../rest/model/Like';
+import { Auth, AuthService } from '../../rest/service/auth.service';
+import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
-  selector: "app-shader-list",
-  templateUrl: "./shader-list.component.html",
-  styleUrls: ["./shader-list.component.css"],
+  selector: 'app-shader-list',
+  templateUrl: './shader-list.component.html',
+  styleUrls: ['./shader-list.component.css'],
 })
 export class ShaderListComponent implements OnInit {
   shaders: Shader[] = [];
@@ -29,6 +23,8 @@ export class ShaderListComponent implements OnInit {
   currentUserLikes: Map<string, boolean> = new Map();
   paramsSubscription: Subscription | null = null;
 
+  user: User | null = null;
+
   @Input() filter: (s: Shader) => boolean = () => true;
 
   constructor(
@@ -36,32 +32,30 @@ export class ShaderListComponent implements OnInit {
     private userService: UserService,
     private errorService: ErrorService,
     private likeService: LikeService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.getShaders();
 
     this.route.params.subscribe((params) => {
-      const query = params["query"];
+      const query = params['query'];
       if (query !== undefined) {
         this.filter = (shader: Shader) => {
-          return (
-            shader.title?.toLowerCase().indexOf(query.toLowerCase()) !== -1
-          );
+          return shader.title?.toLowerCase().indexOf(query.toLowerCase()) !== -1;
         };
         this.getShaders();
       }
     });
+    this.authService.getUserAfterAuth()?.then((user) => (this.user = user));
   }
 
   getShaders(): void {
     this.shaderService.getShaders().subscribe({
       next: (response: Shader[]) => {
         this.shaders = response.filter((v) => this.matchesFilter(v));
-        this.getUsers(
-          this.shaders.map((v) => (v.authorId ? v.authorId : "-1"))
-        );
+        this.getUsers(this.shaders.map((v) => (v.authorId ? v.authorId : '-1')));
         this.getLikes();
       },
       error: (error: HttpErrorResponse) => {
@@ -78,7 +72,7 @@ export class ShaderListComponent implements OnInit {
           .filter((v) => v.id !== undefined && ids.includes(v.id))
           .forEach((user) => {
             if (user.id !== undefined) {
-              this.authors.set(user.id, user.firstName + " " + user.lastName);
+              this.authors.set(user.id, user.firstName + ' ' + user.lastName);
             }
           });
       },
@@ -93,7 +87,7 @@ export class ShaderListComponent implements OnInit {
     this.likeService.getAllLikes().subscribe({
       next: (response: Like[]) => {
         this.likes = response
-          .filter((v) => v.userId !== Auth.user?.id)
+          .filter((v) => v.userId !== this.user?.id)
           .map((v) => v.shaderId)
           .reduce((map, cur) => {
             let val = map.get(cur);
@@ -105,7 +99,7 @@ export class ShaderListComponent implements OnInit {
             return map;
           }, new Map<string, number>());
         this.currentUserLikes = response
-          .filter((v) => v.userId === Auth.user?.id)
+          .filter((v) => v.userId === this.user?.id)
           .reduce((map, cur) => {
             return map.set(cur.shaderId, true);
           }, new Map<string, boolean>());
@@ -118,27 +112,25 @@ export class ShaderListComponent implements OnInit {
   }
 
   getId(shader: Shader): string {
-    return shader.id ? shader.id : "00000000-0000-0000-0000-000000000000";
+    return shader.id ? shader.id : '00000000-0000-0000-0000-000000000000';
   }
 
   getTitle(shader: Shader): string {
-    return shader.title ? shader.title : "Shader Title";
+    return shader.title ? shader.title : 'Shader Title';
   }
 
   getUsername(shader: Shader): string {
-    const author: string | undefined = this.authors.get(
-      shader.authorId ? shader.authorId : ""
-    );
+    const author: string | undefined = this.authors.get(shader.authorId ? shader.authorId : '');
     if (author !== undefined) {
       return author;
     }
-    return "User";
+    return 'User';
   }
 
   getPreviewImg(shader: Shader): string {
     return shader.previewImg
       ? shader.previewImg
-      : "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+      : 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
   }
 
   getLikeCount(shaderId: string | undefined): number {
@@ -148,10 +140,7 @@ export class ShaderListComponent implements OnInit {
   }
 
   getUserHasLikedShader(shaderId: string | undefined): boolean {
-    return (
-      shaderId !== undefined &&
-      this.currentUserLikes.get(shaderId) !== undefined
-    );
+    return shaderId !== undefined && this.currentUserLikes.get(shaderId) !== undefined;
   }
 
   matchesFilter(shader: Shader): boolean {

@@ -1,25 +1,32 @@
 <mat-card>
-    <a href="/shader/{{ id }}">
-        <img 
-            class="shader-preview"
-            src="{{ previewImg }}"
-            mat-card-image 
-            #shaderPreview 
-            alt="Shader Preview">
-    </a>
-    <mat-card-content>
-        <mat-card-title>{{ title }}</mat-card-title>
-        <mat-card-subtitle>{{ user }}</mat-card-subtitle>
-        <div class="like-btn">
-            <span>{{ getLikeCount() }}</span>
-            <button *ngIf="userHasLiked; else notLiked" mat-icon-button color="warn" aria-label="Like button" (click)="unlikeClick()">
-                <mat-icon>favorite</mat-icon>
-            </button>
-            <ng-template #notLiked>
-                <button mat-icon-button aria-label="Like button" (click)="likeClick()">
-                    <mat-icon>favorite_border</mat-icon>
-                </button>
-            </ng-template>
-        </div>
-    </mat-card-content>
+  <a href="/shader/{{ id }}">
+    <img
+      class="shader-preview"
+      src="{{ previewImg }}"
+      mat-card-image
+      #shaderPreview
+      alt="Shader Preview"
+    />
+  </a>
+  <mat-card-content>
+    <mat-card-title>{{ title }}</mat-card-title>
+    <mat-card-subtitle>{{ userName }}</mat-card-subtitle>
+    <div class="like-btn">
+      <span>{{ getLikeCount() }}</span>
+      <button
+        *ngIf="userHasLiked; else notLiked"
+        mat-icon-button
+        color="warn"
+        aria-label="Like button"
+        (click)="unlikeClick()"
+      >
+        <mat-icon>favorite</mat-icon>
+      </button>
+      <ng-template #notLiked>
+        <button mat-icon-button aria-label="Like button" (click)="likeClick()">
+          <mat-icon>favorite_border</mat-icon>
+        </button>
+      </ng-template>
+    </div>
+  </mat-card-content>
 </mat-card>

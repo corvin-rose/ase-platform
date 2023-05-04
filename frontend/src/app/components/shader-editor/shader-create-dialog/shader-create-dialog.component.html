@@ -2,12 +2,26 @@
 <mat-dialog-content>
   <mat-form-field appearance="fill">
     <mat-label>Shader Title</mat-label>
-    <input matInput [(ngModel)]="data">
+    <input
+      matInput
+      [(ngModel)]="data"
+      (keydown)="onInputChange($event, titleInput.value.length)"
+      #titleInput
+    />
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button color="warn" (click)="onCancelClick()">Cancel</button>
-  <button *ngIf="data.length >= 3; else createDisabled" mat-button color="primary" [mat-dialog-close]="data" cdkFocusInitial>Create</button>
+
+  <button
+    *ngIf="data.length >= 3; else createDisabled"
+    mat-button
+    color="primary"
+    [mat-dialog-close]="data"
+  >
+    Create
+  </button>
+
   <ng-template #createDisabled>
     <button mat-button disabled>Create</button>
   </ng-template>
