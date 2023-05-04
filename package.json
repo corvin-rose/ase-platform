@@ -1,0 +1,7 @@
+{
+  "prettier": {
+    "braceStyle": "1tbs",
+    "endOfLine": "lf",
+    "printWidth": 100
+  }
+}

@@ -1,0 +1,26 @@
+version: '3.5'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8090:80"
+    volumes:
+      - ./:/var/www/html/
+    restart: always
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: 'ase'
+      MYSQL_USER: 'ase_admin'
+      MYSQL_PASSWORD: '#?HY:YCV4nMk'
+      MYSQL_ROOT_PASSWORD: '#?HY:YCV4nMk'
+    expose:
+      - "3306"
+    ports:
+      - '3306:3306'

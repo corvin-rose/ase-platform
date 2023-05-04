@@ -1,0 +1,25 @@
+# Angular + Backend .htacces
+
+DirectorySlash Off
+Options All -Indexes -MultiViews 
+
+RewriteEngine On
+RewriteBase /v1/
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)$ backend/index.php [L]
+
+RewriteCond %{HTTP:access_token} ^(.+)$
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:access_token}]
+
+# Protect the htaccess file
+<Files .htaccess>
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Protect env
+<Files env>
+    Order Allow,Deny
+    Deny from all
+</Files>
