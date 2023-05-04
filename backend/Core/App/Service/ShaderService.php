@@ -3,6 +3,7 @@
 namespace Core\App\Service;
 
 use Core\App\Provider\DBConnection;
+use Core\App\Provider\UUID;
 use Core\Domain\Model\ShaderModel;
 use Exception;
 
@@ -31,7 +32,7 @@ class ShaderService {
 
     /** @throws Exception */
     public function addShader($shader = null): ShaderModel {
-        $uuid = uuid();
+        $uuid = UUID::randomUUID();
         $createdAt = date("Y-m-d");
         $this
             ->dbConnection->runSql("INSERT INTO ase_shader (id, title, shader_code, author_id, created_at, preview_img)
@@ -42,7 +43,7 @@ class ShaderService {
 
     /** @throws Exception */
     public function updateShader($shader = null): ShaderModel {
-        if (!isset($shader->id) || !validUUID($shader->id)) {
+        if (!isset($shader->id) || !UUID::validUUID($shader->id)) {
             throw new Exception("Invalid request body", 400);
         }
         $values = [
@@ -59,7 +60,7 @@ class ShaderService {
 
     /** @throws Exception */
     public function deleteShader($id = "-1") {
-        if (!validUUID($id)) {
+        if (!UUID::validUUID($id)) {
             throw new Exception("Invalid UUID $id", 400);
         }
         $this->dbConnection->runSql("DELETE FROM ase_shader WHERE id='$id'");

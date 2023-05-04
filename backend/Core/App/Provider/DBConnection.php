@@ -67,6 +67,7 @@ class DBConnection {
     private function devMode(): bool {
         return !isset($_SERVER["SERVER_NAME"]) ||
             $_SERVER["SERVER_NAME"] == "localhost" ||
-            $_SERVER["SERVER_NAME"] == "127.0.0.1";
+            $_SERVER["SERVER_NAME"] == "127.0.0.1" ||
+            preg_match("/^192/", $_SERVER["SERVER_NAME"]);
     }
 }
