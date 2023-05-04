@@ -31,6 +31,7 @@ import { LeavePageGuard } from "./guards/leave-page-guard";
 import { ShaderLeaveDialogComponent } from "./components/shader-editor/shader-leave-dialog/shader-leave-dialog.component";
 import { SettingsComponent } from "./components/settings/settings.component";
 import { ProfileComponent } from "./components/profile/profile.component";
+import { ThemeToggleComponent } from './components/settings/theme-toggle/theme-toggle.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { ProfileComponent } from "./components/profile/profile.component";
     ShaderLeaveDialogComponent,
     SettingsComponent,
     ProfileComponent,
+    ThemeToggleComponent,
   ],
   imports: [
     BrowserModule,

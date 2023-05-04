@@ -1,25 +1,25 @@
-import { HttpErrorResponse } from "@angular/common/http";
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { Like } from "../../rest/model/Like";
-import { Shader } from "../../rest/model/shader";
-import { User } from "../../rest/model/user";
-import { Auth } from "../../rest/service/auth.service";
-import { ErrorService } from "../../rest/service/error.service";
-import { LikeService } from "../../rest/service/like.service";
-import { ShaderService } from "../../rest/service/shader.service";
-import { UserService } from "../../rest/service/user.service";
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Like } from '../../rest/model/Like';
+import { Shader } from '../../rest/model/shader';
+import { User } from '../../rest/model/user';
+import { Auth } from '../../rest/service/auth.service';
+import { ErrorService } from '../../rest/service/error.service';
+import { LikeService } from '../../rest/service/like.service';
+import { ShaderService } from '../../rest/service/shader.service';
+import { UserService } from '../../rest/service/user.service';
 
 @Component({
-  selector: "app-shader-viewer",
-  templateUrl: "./shader-viewer.component.html",
-  styleUrls: ["./shader-viewer.component.css"],
+  selector: 'app-shader-viewer',
+  templateUrl: './shader-viewer.component.html',
+  styleUrls: ['./shader-viewer.component.css'],
 })
 export class ShaderViewerComponent implements OnInit {
-  shaderCode: string = "void main() {}";
-  shaderTitle: string = "Title";
-  shaderId: string = "00000000-0000-0000-0000-000000000000";
-  author: string = "Author";
+  shaderCode: string = 'void main() {}';
+  shaderTitle: string = 'Title';
+  shaderId: string = '00000000-0000-0000-0000-000000000000';
+  author: string = 'Author';
   likes: string[] = [];
   canEdit: boolean = false;
 
@@ -32,7 +32,7 @@ export class ShaderViewerComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.shaderId = this.route.snapshot.params["id"];
+    this.shaderId = this.route.snapshot.params['id'];
     this.shaderService.getShaderById(this.shaderId).subscribe({
       next: (shader: Shader) => {
         if (
@@ -44,11 +44,12 @@ export class ShaderViewerComponent implements OnInit {
           this.shaderTitle = shader.title;
           this.userService.getUserById(shader.authorId).subscribe({
             next: (user: User) => {
-              this.author = user.firstName + " " + user.lastName;
+              this.author = user.firstName + ' ' + user.lastName;
             },
             error: (error) => this.handleError(error),
           });
           if (Auth.user?.id === shader.authorId) {
+            // TODO: edit is not showing after refresh
             this.canEdit = true;
           }
         }

@@ -30,7 +30,10 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   @Input() readOnly: boolean = false;
   @Output() codeChanged = new EventEmitter<string>();
 
-  editorOptions: any = { theme: "vs-light", language: "glsl" };
+  editorOptions: any = { 
+    theme: document.body.classList.contains('dark') ? "vs-dark" : "vs-light", 
+    language: "glsl" 
+  };
   code: string =
     "// Variables you can use:\n" +
     "// TIME: float which represents the runtime\n" +
@@ -350,7 +353,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
     if (this.readOnly) {
       this.editorOptions = {
-        theme: "vs-light",
+        theme: document.body.classList.contains('dark') ? "vs-dark" : "vs-light", 
         language: "glsl",
         readOnly: this.readOnly,
       };

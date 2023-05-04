@@ -35,7 +35,6 @@ class Key {
             throw new InvalidArgumentException("Algorithm must not be empty");
         }
 
-        // TODO: Remove in PHP 8.0 in favor of class constructor property promotion
         $this->keyMaterial = $keyMaterial;
         $this->algorithm = $algorithm;
     }
