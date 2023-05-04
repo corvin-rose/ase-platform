@@ -41,7 +41,7 @@ class DBConnection {
         error_reporting(E_ERROR);
 
         if ($this->devMode()) {
-            $servername = "localhost";
+            $servername = "mysql:3306";
             $username = "ase_admin";
             $password = "#?HY:YCV4nMk";
             $dbname = "ase";

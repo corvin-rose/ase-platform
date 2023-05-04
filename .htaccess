@@ -4,7 +4,7 @@ DirectorySlash Off
 Options All -Indexes -MultiViews 
 
 RewriteEngine On
-RewriteBase /v1/
+RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)$ backend/index.php [L]

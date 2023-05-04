@@ -9,6 +9,6 @@ foreach ($scripts as $script) {
     $src = file_get_contents(__DIR__ . "/$script");
     $sqls = array_filter(explode(";\r\n", $src), fn($v) => trim(strlen($v)) > 5);
     foreach ($sqls as $sql) {
-        run_sql($sql);
+        DB::run_sql($sql);
     }
 }
