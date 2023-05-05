@@ -22,6 +22,7 @@ export class ShaderViewerComponent implements OnInit {
   author: string = 'Author';
   likes: string[] = [];
   canEdit: boolean = false;
+  loadedData: boolean = false;
 
   user: User | null = null;
 
@@ -65,8 +66,12 @@ export class ShaderViewerComponent implements OnInit {
               error: (error) => this.handleError(error),
             });
           }
+          this.loadedData = true;
         },
-        error: (error) => this.handleError(error),
+        error: (error) => {
+          this.handleError(error);
+          this.loadedData = true;
+        },
       });
     });
   }

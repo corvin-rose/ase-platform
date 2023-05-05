@@ -1,62 +1,67 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap");
 
 :root {
-    --color-primary: #3F51B5;
-    --color-warn: #F44336;
-    --color-black: rgba(0,0,0,.87);
+  --color-primary: #3f51b5;
+  --color-warn: #f44336;
+  --color-black: rgba(0, 0, 0, 0.87);
 
-    --shadow: 0 2px 1px -1px #0003,0 1px 1px #00000024,0 1px 3px #0000001f;
+  --shadow: 0 2px 1px -1px #0003, 0 1px 1px #00000024, 0 1px 3px #0000001f;
 
-    --content-height: calc(100vh - 115px);
+  --content-height: calc(100vh - 115px);
 }
 
 body.dark {
-    --color-black: #fff;
-    --color-primary: #2489D4;
+  --color-black: #fff;
+  --color-primary: #2489d4;
 }
 
 /* html, body { height: 100%; } */
-html, body, app-root > body {
-    min-height: 100vh;
+html,
+body,
+app-root > body {
+  min-height: 100vh;
 }
-html, body {
-    margin: 0;
-    padding: 0;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
-body { font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .snackbar {
-    background: var(--color-warn);
+  background: var(--color-warn) !important;
 }
 .snackbar span {
-    color: #fff;
-    font-weight: 400;
+  color: #fff;
+  font-weight: 400;
 }
 
 /* Scrollbar */
 
 *::-webkit-scrollbar {
-    width: 8px;
+  width: 8px;
 }
 @media (max-width: 720px) {
-    *::-webkit-scrollbar {
-        width: 4px;
-    }
+  *::-webkit-scrollbar {
+    width: 4px;
+  }
 }
 
 *::-webkit-scrollbar-track {
-    background: #ECEDF1;
+  background: #ecedf1;
 }
 
 *::-webkit-scrollbar-thumb {
-    background: #BCBDC1;
+  background: #bcbdc1;
 }
 *::-webkit-scrollbar-thumb:hover {
-    background: #ACADB1;
+  background: #acadb1;
 }
 * {
-    scrollbar-color: #BCBDC1 #ECEDF1;
-    scrollbar-width: thin;
+  scrollbar-color: #bcbdc1 #ecedf1;
+  scrollbar-width: thin;
 }

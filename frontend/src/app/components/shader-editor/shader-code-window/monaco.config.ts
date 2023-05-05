@@ -153,6 +153,18 @@ export function onMonacoLoad() {
           documentation: 'Main method of shader',
           range: range,
         },
+        {
+          label: 'gl_FragColor',
+          kind: monaco.languages.CompletionItemKind.Text,
+          insertText: 'gl_FragColor',
+        },
+        {
+          label: 'frag-color',
+          kind: monaco.languages.CompletionItemKind.Snippet,
+          insertText: 'gl_FragColor = vec4(${1:color}, 1.0);',
+          insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+          range: range,
+        },
         {}, // DAS LEERE OBJEKT ERZEUGT EINEN FEHLER TODO LÖSEN
       ];
       for (let key of monacoKeywords) {

@@ -70,11 +70,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     }, 1000);
 
     if (this.readOnly) {
-      this.editorOptions = {
-        theme: document.body.classList.contains('dark') ? 'vs-dark' : 'vs-light',
-        language: 'glsl',
-        readOnly: this.readOnly,
-      };
+      this.editorOptions.readOnly = this.readOnly;
     }
 
     let path: string = '/' + this.route.snapshot.url.join('/');

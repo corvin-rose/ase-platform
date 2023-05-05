@@ -1,3 +1,5 @@
+<app-search-bar></app-search-bar>
+<div class="searchbar-padding"></div>
 <div class="shader-list">
   <app-shader-list-item
     *ngFor="let s of shaders"
@@ -9,4 +11,8 @@
     [userHasLiked]="getUserHasLikedShader(s.id)"
   >
   </app-shader-list-item>
+
+  <div *ngIf="loading" class="loader">
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
 </div>

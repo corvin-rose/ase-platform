@@ -22,6 +22,7 @@ export class ShaderListComponent implements OnInit {
   likes: Map<string, number> = new Map();
   currentUserLikes: Map<string, boolean> = new Map();
   paramsSubscription: Subscription | null = null;
+  loading: boolean = true;
 
   user: User | null = null;
 
@@ -57,8 +58,10 @@ export class ShaderListComponent implements OnInit {
         this.shaders = response.filter((v) => this.matchesFilter(v));
         this.getUsers(this.shaders.map((v) => (v.authorId ? v.authorId : '-1')));
         this.getLikes();
+        this.loading = false;
       },
       error: (error: HttpErrorResponse) => {
+        this.loading = false;
         this.errorService.showError(error);
         console.error(error.message);
       },

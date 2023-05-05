@@ -8,7 +8,8 @@ services:
     ports:
       - "8090:80"
     volumes:
-      - ./:/var/www/html/
+      - ./backend/:/var/www/html/backend
+      - ./.htaccess:/var/www/html/.htaccess
     restart: always
     depends_on:
       - mysql
@@ -20,7 +21,6 @@ services:
       MYSQL_USER: 'ase_admin'
       MYSQL_PASSWORD: '#?HY:YCV4nMk'
       MYSQL_ROOT_PASSWORD: '#?HY:YCV4nMk'
-    expose:
-      - "3306"
+    restart: always
     ports:
       - '3306:3306'
