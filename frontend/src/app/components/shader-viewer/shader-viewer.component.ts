@@ -37,7 +37,7 @@ export class ShaderViewerComponent implements OnInit {
 
   ngOnInit(): void {
     this.shaderId = this.route.snapshot.params['id'];
-    this.authService.getUserAfterAuth()?.then((user) => {
+    this.authService.getUserAfterAuth().then((user) => {
       this.user = user;
       this.shaderService.getShaderById(this.shaderId).subscribe({
         next: (shader: Shader) => {

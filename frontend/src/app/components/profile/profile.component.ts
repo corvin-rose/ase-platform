@@ -25,7 +25,7 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.getUserAfterAuth()?.then((user) => {
+    this.authService.getUserAfterAuth().then((user) => {
       this.user = user;
       this.shaderService.getShaders().subscribe({
         next: (shaders: Shader[]) => {

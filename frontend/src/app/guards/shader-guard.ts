@@ -47,7 +47,7 @@ export class ShaderGuard implements CanActivate {
   canEdit(route: ActivatedRouteSnapshot): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const shaderId: string = route.params['id'];
-      this.authService.getUserAfterAuth()?.then((user) => {
+      this.authService.getUserAfterAuth().then((user) => {
         this.shaderService.getShaderById(shaderId).subscribe({
           next: (response: Shader) => {
             if (response.authorId === user?.id) {

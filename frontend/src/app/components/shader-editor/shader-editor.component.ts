@@ -77,7 +77,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     } else {
       this.loadedData = true;
     }
-    this.authService.getUserAfterAuth()?.then((user) => (this.user = user));
+    this.authService.getUserAfterAuth().then((user) => (this.user = user));
 
     this.onHotkeySave();
   }

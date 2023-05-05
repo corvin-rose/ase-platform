@@ -25,7 +25,7 @@ export class SettingsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.getUserAfterAuth()?.then((user) => {
+    this.authService.getUserAfterAuth().then((user) => {
       this.user = user;
       this.firstName = user?.firstName ? user.firstName : '';
       this.lastName = user?.lastName ? user.lastName : '';
@@ -50,7 +50,7 @@ export class SettingsComponent implements OnInit {
 
     this.userService.patchUser(user).subscribe({
       next: () => {
-        this.authService.getUserAfterAuth()?.then((user) => {
+        this.authService.getUserAfterAuth().then((user) => {
           this.firstName = user?.firstName ? user.firstName : '';
           this.lastName = user?.lastName ? user.lastName : '';
         });

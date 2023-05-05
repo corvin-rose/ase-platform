@@ -14,7 +14,7 @@ export class ProfileIconComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    this.authService.getUserAfterAuth()?.then((user) => (this.user = user));
+    this.authService.getUserAfterAuth().then((user) => (this.user = user));
   }
 
   userLoggedIn(): boolean {

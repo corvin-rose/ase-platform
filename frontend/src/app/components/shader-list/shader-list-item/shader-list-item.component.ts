@@ -28,7 +28,7 @@ export class ShaderListItemComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.getUserAfterAuth()?.then((user) => (this.user = user));
+    this.authService.getUserAfterAuth().then((user) => (this.user = user));
   }
 
   likeClick(): void {

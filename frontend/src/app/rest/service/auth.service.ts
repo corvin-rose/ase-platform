@@ -37,7 +37,7 @@ export class AuthService {
     return token !== null;
   }
 
-  getUserAfterAuth(): Promise<User | null> | null {
+  getUserAfterAuth(): Promise<User | null> {
     if (Auth.token !== null) {
       const authToken: Token = {
         token: Auth.token,
@@ -55,7 +55,7 @@ export class AuthService {
         });
       });
     } else {
-      return null;
+      return new Promise((resolve, _) => resolve(null));
     }
   }
 }

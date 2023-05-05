@@ -49,7 +49,7 @@ export class ShaderListComponent implements OnInit {
         this.getShaders();
       }
     });
-    this.authService.getUserAfterAuth()?.then((user) => (this.user = user));
+    this.authService.getUserAfterAuth().then((user) => (this.user = user));
   }
 
   getShaders(): void {

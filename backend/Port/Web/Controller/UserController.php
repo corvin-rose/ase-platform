@@ -31,10 +31,15 @@ class UserController extends BaseController {
      * @Get /v1/user/{id}
      * @throws Exception
      */
-    public function getUsersById(string $id): ResponseEntity {
+    public function getUserById(string $id): ResponseEntity {
         $user = $this->userService->findUserById($id);
 
-        $authStatus = $this->authService->authStatus();
+        try {
+            $authStatus = $this->authService->authStatus();
+        } catch (Exception $ex) {
+            $authStatus = new UserModel();
+        }
+
         if ($authStatus->userName !== $user->email) {
             unset($user->password);
             unset($user->email);
