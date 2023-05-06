@@ -12,15 +12,15 @@
         <span>Main</span>
       </ng-template>
     </mat-tab>
-    <mat-tab *ngFor="let buffer of bufferCode; let i = index">
+    <mat-tab *ngFor="let buffer of bufferKeys">
       <ng-template mat-tab-label>
-        <div class="mat-tab-label-content" (contextmenu)="onBufferContextmenu($event, i)">
+        <div class="mat-tab-label-content" (contextmenu)="onBufferContextmenu($event, buffer)">
           <mat-icon class="example-tab-icon">filter_none</mat-icon>
-          <span>Buffer {{ i + 1 }}</span>
+          <span>Buffer {{ buffer }}</span>
         </div>
       </ng-template>
     </mat-tab>
-    <mat-tab disabled *ngIf="bufferCode.length < 4 && !readOnly">
+    <mat-tab disabled *ngIf="bufferCode.size < 4 && !readOnly">
       <ng-template mat-tab-label>
         <button mat-icon-button (click)="onAddBuffer()" style="transform: translateX(-16px)">
           <mat-icon>add</mat-icon>
@@ -44,8 +44,8 @@
 </div>
 
 <mat-menu #rightMenu="matMenu">
-  <ng-template matMenuContent>
-    <button mat-menu-item class="menu-warn">
+  <ng-template matMenuContent let-buffer="buffer">
+    <button mat-menu-item class="menu-warn" (click)="onBufferDelete(buffer)">
       <mat-icon>delete</mat-icon>
       <span>Delete</span>
     </button>

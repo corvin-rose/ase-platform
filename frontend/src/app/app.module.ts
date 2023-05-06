@@ -35,6 +35,7 @@ import { ThemeToggleComponent } from './components/settings/theme-toggle/theme-t
 
 import { onMonacoLoad } from './components/shader-editor/shader-code-window/monaco.config';
 import { MatTabsModule } from '@angular/material/tabs';
+import { ShaderBufferDeleteDialogComponent } from './components/shader-editor/shader-buffer-delete-dialog/shader-buffer-delete-dialog.component';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -63,6 +64,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     SettingsComponent,
     ProfileComponent,
     ThemeToggleComponent,
+    ShaderBufferDeleteDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,50 @@
+<h1 mat-dialog-title>Delete Buffer</h1>
+<div mat-dialog-content>
+  <p>The following buffer will be deleted:</p>
+
+  <mat-tab-group mat-align-tabs="start" [selectedIndex]="bufferKeys.indexOf(data.bufferIndex)">
+    <mat-tab *ngFor="let buffer of bufferKeys" disabled>
+      <ng-template mat-tab-label>
+        <div [class]="buffer == data.bufferIndex ? 'warn' : ''" class="mat-tab-label-content">
+          <mat-icon>filter_none</mat-icon>
+          <span>Buffer {{ buffer }}</span>
+        </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+  <!--
+  <div class="spacer"></div>
+  <p>Your buffers will be restructured as the following:</p>
+
+  <mat-tab-group mat-align-tabs="start" [selectedIndex]="0" class="tab-group-first-invisible">
+    <mat-tab></mat-tab>
+    <mat-tab
+      *ngFor="let buffer of data.buffers.slice(0, data.buffers.length - 1); let i = index"
+      disabled
+    >
+      <ng-template mat-tab-label>
+        <div class="mat-tab-label-content" *ngIf="i >= data.bufferIndex; else normalTab">
+          <mat-icon class="tab-new-content">filter_none</mat-icon>
+          <span class="tab-old-content">Buffer {{ i + 2 }}</span>
+          <span class="tab-new-content">Buffer {{ i + 1 }}</span>
+        </div>
+        <ng-template #normalTab>
+          <div class="mat-tab-label-content">
+            <mat-icon>filter_none</mat-icon>
+            <span>Buffer {{ i + 1 }}</span>
+          </div>
+        </ng-template>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+  -->
+  <div class="spacer"></div>
+  <p>
+    Please make sure you have referenced the correct buffers in your code after proceeding with
+    these changes.
+  </p>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">Cancel</button>
+  <button mat-button color="warn" [mat-dialog-close]="data" cdkFocusInitial>Delete</button>
+</mat-dialog-actions>

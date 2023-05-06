@@ -15,6 +15,8 @@ import { ErrorService } from '../../../rest/service/error.service';
 import { ShaderService } from '../../../rest/service/shader.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
+import { ShaderBufferDeleteDialogComponent } from '../shader-buffer-delete-dialog/shader-buffer-delete-dialog.component';
 
 @Component({
   selector: 'app-shader-code-window',
@@ -55,7 +57,8 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     '}\n';
 
   mainCode: string = this.code;
-  bufferCode: string[] = ['// test 1', '// test 2'];
+  bufferCode: Map<number, string> = new Map();
+  bufferKeys: number[] = [];
 
   lastChange: number = 0;
   needsUpdate: boolean = false;
@@ -65,7 +68,8 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private shaderService: ShaderService,
     private errorService: ErrorService,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -116,18 +120,44 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     if (event.index == 0) {
       this.code = this.mainCode;
     } else {
-      this.code = this.bufferCode[event.index - 1];
+      this.code = this.bufferCode.get(this.bufferKeys[event.index - 1]) ?? '// Code not found';
     }
   }
 
   onAddBuffer(): void {
-    this.bufferCode.push('// new buffer');
+    let bufferIndex = 0;
+    let buffer = undefined;
+
+    do {
+      bufferIndex++;
+      buffer = this.bufferCode.get(bufferIndex);
+    } while (buffer !== undefined);
+
+    this.bufferCode.set(bufferIndex, `// Buffer ${bufferIndex}\nvoid main() {}`);
+    this.bufferKeys = [...this.bufferCode.keys()];
   }
 
   onBufferContextmenu(event: MouseEvent, bufferIndex: number): void {
     event.preventDefault();
     this.menuTopLeftPosition.x = event.clientX;
     this.menuTopLeftPosition.y = event.clientY;
-    this.matMenuTrigger?.openMenu();
+    if (this.matMenuTrigger) {
+      this.matMenuTrigger.menuData = { buffer: bufferIndex };
+      this.matMenuTrigger.openMenu();
+    }
+  }
+
+  onBufferDelete(bufferIndex: number): void {
+    const dialogRef = this.dialog.open(ShaderBufferDeleteDialogComponent, {
+      data: { bufferIndex: bufferIndex, buffers: this.bufferCode },
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.bufferCode.delete(result.bufferIndex);
+        this.bufferKeys = [...this.bufferCode.keys()];
+      }
+    });
   }
 }

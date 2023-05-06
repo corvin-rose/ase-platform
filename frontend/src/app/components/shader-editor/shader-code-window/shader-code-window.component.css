@@ -34,6 +34,7 @@ mat-tab-group {
 .menu-warn,
 .menu-warn > mat-icon {
   color: var(--color-warn);
+  font-weight: 500;
 }
 .loader {
   z-index: 100000;
