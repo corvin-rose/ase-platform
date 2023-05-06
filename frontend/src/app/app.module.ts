@@ -34,6 +34,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ThemeToggleComponent } from './components/settings/theme-toggle/theme-toggle.component';
 
 import { onMonacoLoad } from './components/shader-editor/shader-code-window/monaco.config';
+import { MatTabsModule } from '@angular/material/tabs';
 
 const monacoConfig: NgxMonacoEditorConfig = {
   baseUrl: 'assets',
@@ -73,6 +74,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     HttpClientModule,
     MatDialogModule,
     ReactiveFormsModule,
+    MatTabsModule,
   ],
   providers: [
     AuthGuard,

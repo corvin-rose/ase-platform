@@ -57,7 +57,7 @@ export function onMonacoLoad() {
     tokenizer: {
       root: [
         // custom
-        [/RESOLUTION|TIME|FRAME|MOUSE/, 'input-var'],
+        [/RESOLUTION|TIME|FRAME|MOUSE|buffer[1-4]/, 'input-var'],
 
         // identifiers and keywords
         [
@@ -165,7 +165,6 @@ export function onMonacoLoad() {
           insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
           range: range,
         },
-        {}, // DAS LEERE OBJEKT ERZEUGT EINEN FEHLER TODO LÖSEN
       ];
       for (let key of monacoKeywords) {
         suggestions.push({
@@ -185,6 +184,10 @@ export function onMonacoLoad() {
         TIME: 'float',
         FRAME: 'int',
         MOUSE: 'vec2',
+        buffer1: 'sampler2D',
+        buffer2: 'sampler2D',
+        buffer3: 'sampler2D',
+        buffer4: 'sampler2D',
       };
       const hints: InlayHint[] = [];
       Object.keys(tokenHintMap).forEach((key) => {
@@ -206,10 +209,18 @@ export function onMonacoLoad() {
     },
   });
 
-  monaco.editor.defineTheme('glsl-theme', {
-    base: document.body.classList.contains('dark') ? 'vs-dark' : 'vs',
+  const themeRules = [{ token: 'input-var', foreground: '#B078E3' }];
+
+  monaco.editor.defineTheme('glsl-light', {
+    base: 'vs',
     inherit: true,
-    rules: [{ token: 'input-var', foreground: '#B078E3' }],
+    rules: themeRules,
+    colors: {},
+  });
+  monaco.editor.defineTheme('glsl-dark', {
+    base: 'vs-dark',
+    inherit: true,
+    rules: themeRules,
     colors: {},
   });
 }

@@ -7,11 +7,14 @@ import {
   OnDestroy,
   Input,
   ElementRef,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Shader } from '../../../rest/model/shader';
 import { ErrorService } from '../../../rest/service/error.service';
 import { ShaderService } from '../../../rest/service/shader.service';
+import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatMenuTrigger } from '@angular/material/menu';
 
 @Component({
   selector: 'app-shader-code-window',
@@ -26,14 +29,16 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   // Autocomplete
   // https://microsoft.github.io/monaco-editor/playground.html#extending-language-services-custom-languages
 
+  @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger: MatMenuTrigger | undefined;
+  menuTopLeftPosition = { x: 0, y: 0 };
+
   @Input() readOnly: boolean = false;
   @Input() loading: boolean = false;
   @Output() codeChanged = new EventEmitter<string>();
 
   editorOptions: any = {
-    theme: 'glsl-theme',
+    theme: document.body.classList.contains('dark') ? 'glsl-dark' : 'glsl-light',
     language: 'glsl',
-    automaticLayout: true,
     autoClosingPairs: [{ open: '(', close: ')' }],
   };
   code: string =
@@ -48,6 +53,10 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     '\tvec3 color = vec3(0.0, 0.0, 0.0);\n' +
     '\tgl_FragColor = vec4(color, 1.0);\n' +
     '}\n';
+
+  mainCode: string = this.code;
+  bufferCode: string[] = ['// test 1', '// test 2'];
+
   lastChange: number = 0;
   needsUpdate: boolean = false;
   changeInterval: any = null;
@@ -80,6 +89,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
         next: (shader: Shader) => {
           if (shader.shaderCode !== undefined) {
             this.code = shader.shaderCode;
+            this.mainCode = shader.shaderCode;
           }
         },
         error: (error: HttpErrorResponse) => {
@@ -102,7 +112,22 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     clearInterval(this.changeInterval);
   }
 
-  onLoadedData(): void {
-    this.loading = false;
+  onTabChanged(event: MatTabChangeEvent): void {
+    if (event.index == 0) {
+      this.code = this.mainCode;
+    } else {
+      this.code = this.bufferCode[event.index - 1];
+    }
+  }
+
+  onAddBuffer(): void {
+    this.bufferCode.push('// new buffer');
+  }
+
+  onBufferContextmenu(event: MouseEvent, bufferIndex: number): void {
+    event.preventDefault();
+    this.menuTopLeftPosition.x = event.clientX;
+    this.menuTopLeftPosition.y = event.clientY;
+    this.matMenuTrigger?.openMenu();
   }
 }

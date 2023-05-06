@@ -4,6 +4,10 @@ export const monacoKeywords = [
   'RESOLUTION',
   'FRAME',
   'MOUSE',
+  'buffer1',
+  'buffer2',
+  'buffer3',
+  'buffer4',
   // GLSL Keywords
   'const',
   'uniform',
