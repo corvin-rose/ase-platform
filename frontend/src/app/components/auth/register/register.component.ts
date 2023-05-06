@@ -1,15 +1,15 @@
-import { Component } from "@angular/core";
-import { NgForm } from "@angular/forms";
-import { Router } from "@angular/router";
-import { UserService } from "../../../rest/service/user.service";
-import { User } from "../../../rest/model/user";
-import { HttpErrorResponse } from "@angular/common/http";
-import { ErrorService } from "../../../rest/service/error.service";
+import { Component } from '@angular/core';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
+import { UserService } from '../../../service/user.service';
+import { User } from '../../../model/user';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ErrorService } from '../../../service/error.service';
 
 @Component({
-  selector: "app-register",
-  templateUrl: "./register.component.html",
-  styleUrls: ["./register.component.css"],
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css'],
 })
 export class RegisterComponent {
   constructor(
@@ -30,7 +30,7 @@ export class RegisterComponent {
 
     this.userService.registerUser(user).subscribe({
       next: () => {
-        this.router.navigate(["/login"]);
+        this.router.navigate(['/login']);
       },
       error: (error: HttpErrorResponse) => {
         this.errorService.showError(error);

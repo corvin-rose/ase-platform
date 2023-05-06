@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
-import { Like } from '../../../rest/model/Like';
-import { Auth, AuthService } from '../../../rest/service/auth.service';
-import { ErrorService } from '../../../rest/service/error.service';
-import { LikeService } from '../../../rest/service/like.service';
-import { User } from '../../../rest/model/user';
+import { Like } from '../../../model/like';
+import { Auth, AuthService } from '../../../service/auth.service';
+import { ErrorService } from '../../../service/error.service';
+import { LikeService } from '../../../service/like.service';
+import { User } from '../../../model/user';
 
 @Component({
   selector: 'app-shader-list-item',

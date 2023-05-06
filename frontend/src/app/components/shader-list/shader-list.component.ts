@@ -1,13 +1,13 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ShaderService } from '../../rest/service/shader.service';
-import { Shader } from '../../rest/model/shader';
-import { User } from '../../rest/model/user';
+import { ShaderService } from '../../service/shader.service';
+import { Shader } from '../../model/shader';
+import { User } from '../../model/user';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserService } from '../../rest/service/user.service';
-import { ErrorService } from '../../rest/service/error.service';
-import { LikeService } from '../../rest/service/like.service';
-import { Like } from '../../rest/model/Like';
-import { Auth, AuthService } from '../../rest/service/auth.service';
+import { UserService } from '../../service/user.service';
+import { ErrorService } from '../../service/error.service';
+import { LikeService } from '../../service/like.service';
+import { Like } from '../../model/like';
+import { Auth, AuthService } from '../../service/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 

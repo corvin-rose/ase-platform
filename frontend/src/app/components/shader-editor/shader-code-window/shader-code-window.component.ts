@@ -10,9 +10,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Shader } from '../../../rest/model/shader';
-import { ErrorService } from '../../../rest/service/error.service';
-import { ShaderService } from '../../../rest/service/shader.service';
+import { Shader } from '../../../model/shader';
+import { ErrorService } from '../../../service/error.service';
+import { ShaderService } from '../../../service/shader.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';

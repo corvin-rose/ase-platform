@@ -8,10 +8,10 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Shader } from '../rest/model/shader';
-import { AuthService } from '../rest/service/auth.service';
-import { ErrorService } from '../rest/service/error.service';
-import { ShaderService } from '../rest/service/shader.service';
+import { Shader } from '../model/shader';
+import { AuthService } from '../service/auth.service';
+import { ErrorService } from '../service/error.service';
+import { ShaderService } from '../service/shader.service';
 
 @Injectable()
 export class ShaderGuard implements CanActivate {

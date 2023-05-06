@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { User } from '../../rest/model/user';
-import { Auth, AuthService } from '../../rest/service/auth.service';
-import { ErrorService } from '../../rest/service/error.service';
-import { UserService } from '../../rest/service/user.service';
+import { User } from '../../model/user';
+import { Auth, AuthService } from '../../service/auth.service';
+import { ErrorService } from '../../service/error.service';
+import { UserService } from '../../service/user.service';
 
 @Component({
   selector: 'app-settings',

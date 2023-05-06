@@ -1,11 +1,11 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
-import { environment } from "../../../environments/environment";
-import { Like } from "../model/Like";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Like } from '../model/like';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class LikeService {
   private apiServerUrl = environment.apiBaseUrl;

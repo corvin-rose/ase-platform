@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core";
-import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
-import { Shader } from "../model/shader";
-import { environment } from "../../../environments/environment";
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Shader } from '../model/shader';
+import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ShaderService {
   private apiServerUrl = environment.apiBaseUrl;
@@ -29,15 +29,10 @@ export class ShaderService {
   }
 
   public patchShader(shader: Shader): Observable<Shader> {
-    return this.http.patch<Shader>(
-      `${this.apiServerUrl}/shader/update`,
-      shader
-    );
+    return this.http.patch<Shader>(`${this.apiServerUrl}/shader/update`, shader);
   }
 
   public deleteShader(shaderId: string): Observable<Shader> {
-    return this.http.delete<Shader>(
-      `${this.apiServerUrl}/shader/delete/${shaderId}`
-    );
+    return this.http.delete<Shader>(`${this.apiServerUrl}/shader/delete/${shaderId}`);
   }
 }

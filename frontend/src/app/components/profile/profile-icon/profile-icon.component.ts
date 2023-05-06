@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Auth, AuthService } from '../../../rest/service/auth.service';
-import { User } from '../../../rest/model/user';
+import { Auth, AuthService } from '../../../service/auth.service';
+import { User } from '../../../model/user';
 
 @Component({
   selector: 'app-profile-icon',

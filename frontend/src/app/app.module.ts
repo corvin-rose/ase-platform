@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialModule } from './modules/material/material.module';
+import { MaterialModule } from './material.module';
 import { MonacoEditorModule, NgxMonacoEditorConfig } from 'ngx-monaco-editor';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
@@ -21,7 +21,7 @@ import { ShaderCreateDialogComponent } from './components/shader-editor/shader-c
 import { MatDialogModule } from '@angular/material/dialog';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
-import { HttpInterceptorService } from './rest/service/http-interceptor.service';
+import { HttpInterceptorService } from './service/http-interceptor.service';
 import { ShaderViewerComponent } from './components/shader-viewer/shader-viewer.component';
 import { ShaderDeleteDialogComponent } from './components/shader-editor/shader-delete-dialog/shader-delete-dialog.component';
 import { ShaderSettingsDialogComponent } from './components/shader-editor/shader-settings-dialog/shader-settings-dialog.component';

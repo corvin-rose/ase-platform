@@ -8,19 +8,19 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ShaderService } from '../../rest/service/shader.service';
-import { Shader } from '../../rest/model/shader';
+import { ShaderService } from '../../service/shader.service';
+import { Shader } from '../../model/shader';
 import { ShaderCreateDialogComponent } from './shader-create-dialog/shader-create-dialog.component';
 import { ShaderDeleteDialogComponent } from './shader-delete-dialog/shader-delete-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Auth, AuthService } from '../../rest/service/auth.service';
+import { Auth, AuthService } from '../../service/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorService } from '../../rest/service/error.service';
+import { ErrorService } from '../../service/error.service';
 import { ShaderSettingsDialogComponent } from './shader-settings-dialog/shader-settings-dialog.component';
 import { CanComponentLeave } from '../../guards/leave-page-guard';
 import { Observable } from 'rxjs';
 import { ShaderLeaveDialogComponent } from './shader-leave-dialog/shader-leave-dialog.component';
-import { User } from '../../rest/model/user';
+import { User } from '../../model/user';
 
 @Component({
   selector: 'app-shader-editor',
