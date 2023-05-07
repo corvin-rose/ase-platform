@@ -9,6 +9,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
+import { ShaderSource } from '../../../model/shader-source';
 
 @Component({
   selector: 'app-shader-renderer',
@@ -20,11 +21,17 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
   @Output() onMessage = new EventEmitter<{ content: string; error: boolean }[]>();
   @Output() onCompile = new EventEmitter<{ compileImg: string }>();
-  @Input() shader: string;
+  @Input() shader: ShaderSource;
+  @Input() renderId: string = '';
 
   time: number = 0;
   frame: number = 0;
   program: any = null;
+  bufferPrograms: {
+    program: WebGLProgram | null;
+    texture: WebGLTexture | null;
+    buffer: WebGLBuffer | null;
+  }[] = [];
   size: { x: number; y: number } = { x: 0, y: 0 };
   mousePos: { x: number; y: number } = { x: 0, y: 0 };
   vertexBuffer: WebGLBuffer | null = 0;
@@ -33,7 +40,10 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   shaderLineOffset: number = 0;
 
   constructor() {
-    this.shader = '';
+    this.shader = {
+      main: '',
+      buffers: new Map(),
+    };
   }
 
   ngOnChanges(_changes: SimpleChanges): void {
@@ -89,27 +99,42 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
                         #endif
                         ${vertexPositions}
                         void main()	{
-                            gl_Position = vec4(position, 0.0, .001);
+                            gl_Position = vec4(position, 0.0, 1.0);
                         }`;
 
     const colorDef = newGlVersion ? 'out vec4 fragColor;\n#define gl_FragColor fragColor' : '';
+    const textureFunctions = newGlVersion
+      ? ''
+      : `
+                          vec4 texture(sampler2D   s, vec2 c)          { return texture2D(s,c); }
+                          vec4 texture(sampler2D   s, vec2 c, float b) { return texture2D(s,c,b); }
+                          vec4 texture(samplerCube s, vec3 c )         { return textureCube(s,c); }
+                          vec4 texture(samplerCube s, vec3 c, float b) { return textureCube(s,c,b); }
+    `;
     const fShaderSetup = `${shaderVersion}
                           #ifdef GL_ES
                           precision highp float;
                           precision highp int;
                           #endif
+                          ${textureFunctions}
+
                           uniform vec2 RESOLUTION;
                           uniform float TIME;
                           uniform int FRAME;
                           uniform vec2 MOUSE;
+
+                          uniform sampler2D buffer1;
+                          uniform sampler2D buffer2;
+                          uniform sampler2D buffer3;
+                          uniform sampler2D buffer4;
                           ${colorDef}`;
     const fShaderSrc = `${fShaderSetup}
-                        ${this.shader}`;
+                        ${this.shader.main}`;
 
     this.shaderLineOffset = fShaderSetup.split('\n').length;
 
     const vertexBufferData: Float32Array = new Float32Array([
-      -0.5, 0.5, 0.0, -0.5, -0.5, 0.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0,
+      -1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
     ]);
     const indexData: Uint16Array = new Uint16Array([3, 2, 1, 3, 1, 0]);
 
@@ -123,16 +148,87 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
+    this.bufferPrograms = [];
+    for (let key of this.shader.buffers.keys()) {
+      const bufferShaderSrc = `${fShaderSetup}
+                               ${this.shader.main.replace(/void\s+main\s*\([^)]*\)/, 'void _()')}
+                               ${this.shader.buffers.get(key)}`;
+
+      const fragShader = this.createShader(gl, bufferShaderSrc, gl.FRAGMENT_SHADER);
+      const vertShader = this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
+      if (fragShader === null || vertShader === null) {
+        console.error('Error while creating shaders', fragShader, vertShader);
+        return;
+      }
+
+      const bufferProgram: any = this.createProgram(gl, vertShader, fragShader);
+
+      const bufferTexture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, bufferTexture);
+      gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        this.size.x,
+        this.size.y,
+        0,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        null
+      );
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+      const buffer = gl.createFramebuffer();
+      gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
+      gl.framebufferTexture2D(
+        gl.FRAMEBUFFER,
+        gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D,
+        bufferTexture,
+        0
+      );
+
+      this.bufferPrograms.push({
+        program: bufferProgram,
+        texture: bufferTexture,
+        buffer: buffer,
+      });
+    }
+
     const fragShader = this.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER);
     const vertShader = this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
     if (fragShader === null || vertShader === null) {
       console.error('Error while creating shaders', fragShader, vertShader);
       return;
     }
+
     this.program = this.createProgram(gl, fragShader, vertShader);
     gl.useProgram(this.program);
     gl.clearColor(0, 0, 0, 1);
     gl.viewport(0, 0, this.size.x, this.size.y);
+
+    this.bufferPrograms.forEach((bufferProgram, i) => {
+      const bufferLocation = gl.getUniformLocation(this.program, `buffer${i + 1}`);
+      switch (i + 1) {
+        case 1:
+          gl.uniform1i(bufferLocation, 1);
+          gl.activeTexture(gl.TEXTURE1);
+          break;
+        case 2:
+          gl.uniform1i(bufferLocation, 2);
+          gl.activeTexture(gl.TEXTURE2);
+          break;
+        case 3:
+          gl.uniform1i(bufferLocation, 3);
+          gl.activeTexture(gl.TEXTURE3);
+          break;
+        case 4:
+          gl.uniform1i(bufferLocation, 4);
+          gl.activeTexture(gl.TEXTURE4);
+          break;
+      }
+      gl.bindTexture(gl.TEXTURE_2D, bufferProgram.texture);
+    });
 
     this.sendMessages(['shader compiled!']);
 
@@ -169,20 +265,33 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   render(gl: WebGL2RenderingContext | WebGLRenderingContext): void {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
+    for (const program of [...this.bufferPrograms.map((v) => v.program), this.program]) {
+      gl.useProgram(program);
+      const resolutionLoc: WebGLUniformLocation | null = gl.getUniformLocation(
+        program,
+        'RESOLUTION'
+      );
+      gl.uniform2f(resolutionLoc, this.size.x, this.size.y);
+      const timeLoc: WebGLUniformLocation | null = gl.getUniformLocation(program, 'TIME');
+      gl.uniform1f(timeLoc, this.time);
+      const frameLoc: WebGLUniformLocation | null = gl.getUniformLocation(program, 'FRAME');
+      gl.uniform1i(frameLoc, this.frame);
+      const mouseLoc: WebGLUniformLocation | null = gl.getUniformLocation(program, 'MOUSE');
+      gl.uniform2f(mouseLoc, this.mousePos.x, this.mousePos.y);
+    }
+
+    this.bufferPrograms.forEach((bufferProgram) => {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, bufferProgram.buffer);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+      gl.viewport(0, 0, this.size.x, this.size.y);
+      gl.useProgram(bufferProgram.program);
+      gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    });
+
+    gl.useProgram(this.program);
     const positionAttrib: number = gl.getAttribLocation(this.program, 'position');
     gl.enableVertexAttribArray(positionAttrib);
-
-    const resolutionLoc: WebGLUniformLocation | null = gl.getUniformLocation(
-      this.program,
-      'RESOLUTION'
-    );
-    gl.uniform2f(resolutionLoc, this.size.x, this.size.y);
-    const timeLoc: WebGLUniformLocation | null = gl.getUniformLocation(this.program, 'TIME');
-    gl.uniform1f(timeLoc, this.time);
-    const frameLoc: WebGLUniformLocation | null = gl.getUniformLocation(this.program, 'FRAME');
-    gl.uniform1i(frameLoc, this.frame);
-    const mouseLoc: WebGLUniformLocation | null = gl.getUniformLocation(this.program, 'MOUSE');
-    gl.uniform2f(mouseLoc, this.mousePos.x, this.mousePos.y);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);

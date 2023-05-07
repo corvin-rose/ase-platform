@@ -1,11 +1,11 @@
 import {
-  Component,
-  OnInit,
-  ViewChild,
-  ElementRef,
-  HostListener,
   AfterViewInit,
   ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ShaderService } from '../../service/shader.service';
@@ -13,14 +13,17 @@ import { Shader } from '../../model/shader';
 import { ShaderCreateDialogComponent } from './shader-create-dialog/shader-create-dialog.component';
 import { ShaderDeleteDialogComponent } from './shader-delete-dialog/shader-delete-dialog.component';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Auth, AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ErrorService } from '../../service/error.service';
 import { ShaderSettingsDialogComponent } from './shader-settings-dialog/shader-settings-dialog.component';
 import { CanComponentLeave } from '../../guards/leave-page-guard';
-import { Observable } from 'rxjs';
+import { forkJoin, map, Observable } from 'rxjs';
 import { ShaderLeaveDialogComponent } from './shader-leave-dialog/shader-leave-dialog.component';
 import { User } from '../../model/user';
+import { ShaderSource } from '../../model/shader-source';
+import { BufferService } from '../../service/buffer.service';
+import { Buffer } from '../../model/buffer';
 
 @Component({
   selector: 'app-shader-editor',
@@ -32,12 +35,12 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
   shaderPreviewContainer!: ElementRef;
   @ViewChild('buttonContainer', { static: true }) buttonContainer!: ElementRef;
 
-  shader: string = 'void main() { gl_FragColor = vec4(0.0); }';
+  shader: ShaderSource = { main: 'void main() { gl_FragColor = vec4(0.0); }', buffers: new Map() };
   messages: { content: string; error: boolean }[] = [];
   shaderImg: string = '';
   consoleContainerHeight: number = 0;
   editMode: boolean = false;
-  oldShaderCode: string = 'void main() { gl_FragColor = vec4(0.0); }';
+  oldShaderCode: ShaderSource = this.shader;
   loading: boolean = false;
   loadedData: boolean = false;
 
@@ -50,7 +53,8 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     private cdref: ChangeDetectorRef,
     private router: Router,
     private errorService: ErrorService,
-    private authService: AuthService
+    private authService: AuthService,
+    private bufferService: BufferService
   ) {}
 
   ngOnInit(): void {
@@ -60,20 +64,32 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
       this.editMode = true;
 
       let shaderId: string = this.route.snapshot.params['id'];
-      this.shaderService.getShaderById(shaderId).subscribe({
-        next: (shader: Shader) => {
-          if (shader.shaderCode !== undefined) {
-            this.oldShaderCode = shader.shaderCode;
-            this.shader = shader.shaderCode;
+      forkJoin([
+        this.shaderService.getShaderById(shaderId),
+        this.bufferService.getAllBuffersWithShaderId(shaderId),
+      ])
+        .pipe(
+          map(([shader, loadedBuffers]) => {
+            if (shader.shaderCode !== undefined) {
+              const buffersMap = new Map();
+              loadedBuffers.forEach((buffer) => {
+                buffersMap.set(buffer.bufferKey, buffer.bufferCode);
+              });
+              this.shader = { main: shader.shaderCode, buffers: buffersMap };
+              this.oldShaderCode = this.shader;
+            }
+          })
+        )
+        .subscribe({
+          next: () => {
             this.loadedData = true;
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          this.loadedData = true;
-          this.errorService.showError(error);
-          console.error(error.message);
-        },
-      });
+          },
+          error: (error: HttpErrorResponse) => {
+            this.loadedData = true;
+            this.errorService.showError(error);
+            console.error(error.message);
+          },
+        });
     } else {
       this.loadedData = true;
     }
@@ -87,7 +103,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     this.cdref.detectChanges();
   }
 
-  onCodeChanged(code: string): void {
+  onCodeChanged(code: ShaderSource): void {
     this.shader = code;
   }
 
@@ -120,19 +136,31 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     dialogRef.afterClosed().subscribe((result) => {
       if (result !== undefined && this.user !== null) {
         const shader: Shader = {
-          shaderCode: this.shader,
+          shaderCode: this.shader.main,
           title: result,
           authorId: this.user.id,
           previewImg: this.shaderImg,
         };
-
         this.loading = true;
-
         setTimeout(() => {
           this.shaderService.addShader(shader).subscribe({
-            next: (response: Shader) => {
-              this.loading = false;
-              this.router.navigate(['/shader', response.id, 'edit']);
+            next: (shaderResponse) => {
+              const buffers: Buffer[] = [...this.shader.buffers.entries()].map(
+                ([bufferKey, bufferCode]) => {
+                  return {
+                    bufferKey: bufferKey.toString(),
+                    bufferCode: bufferCode,
+                    shaderId: shaderResponse.id,
+                  };
+                }
+              );
+              this.bufferService.updateBuffers(buffers).subscribe({
+                next: () => {
+                  this.router.navigate(['/shader', shaderResponse.id, 'edit']);
+                  this.loading = false;
+                },
+                error: (error) => this.disableLoadingAndProcessError(error),
+              });
             },
             error: (error) => this.disableLoadingAndProcessError(error),
           });
@@ -148,12 +176,25 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
       let shaderId: string = this.route.snapshot.params['id'];
       this.shaderService.getShaderById(shaderId).subscribe({
         next: (response: Shader) => {
-          response.shaderCode = this.shader;
+          response.shaderCode = this.shader.main;
           response.previewImg = this.shaderImg;
-          this.shaderService.updateShader(response).subscribe({
+
+          const buffers: Buffer[] = [...this.shader.buffers.entries()].map(
+            ([bufferKey, bufferCode]) => {
+              return {
+                bufferKey: bufferKey.toString(),
+                bufferCode: bufferCode,
+                shaderId: response.id,
+              };
+            }
+          );
+          forkJoin([
+            this.shaderService.updateShader(response),
+            this.bufferService.updateBuffers(buffers),
+          ]).subscribe({
             next: () => {
               this.loading = false;
-              this.oldShaderCode = this.shader;
+              Object.assign(this.oldShaderCode, this.shader);
             },
             error: (error) => this.disableLoadingAndProcessError(error),
           });
@@ -214,7 +255,10 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
   }
 
   userMadeChanges(): boolean {
-    return this.oldShaderCode !== this.shader;
+    return (
+      this.oldShaderCode.main != this.shader.main &&
+      this.oldShaderCode.buffers.values() != this.shader.buffers.values()
+    );
   }
 
   canLeave(): boolean | Observable<boolean> | Promise<boolean> {
@@ -223,7 +267,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     }
 
     if (this.userMadeChanges()) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve, _) => {
         this.dialog
           .open(ShaderLeaveDialogComponent)
           .afterClosed()
@@ -234,5 +278,14 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     } else {
       return true;
     }
+  }
+
+  renderId(): string {
+    const shader =
+      JSON.stringify(this.shader.main) +
+      JSON.stringify(['', ...this.shader.buffers.values()].reduce((a, b) => a + b));
+    return Array.from(shader)
+      .reduce((s, c) => (Math.imul(31, s) + c.charCodeAt(0)) | 0, 0)
+      .toString();
   }
 }

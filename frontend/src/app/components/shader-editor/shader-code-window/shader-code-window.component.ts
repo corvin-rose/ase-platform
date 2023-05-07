@@ -10,13 +10,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Shader } from '../../../model/shader';
 import { ErrorService } from '../../../service/error.service';
 import { ShaderService } from '../../../service/shader.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatMenuTrigger } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { ShaderBufferDeleteDialogComponent } from '../shader-buffer-delete-dialog/shader-buffer-delete-dialog.component';
+import { ShaderSource } from '../../../model/shader-source';
+import { forkJoin, map } from 'rxjs';
+import { BufferService } from '../../../service/buffer.service';
 
 @Component({
   selector: 'app-shader-code-window',
@@ -36,7 +38,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
   @Input() readOnly: boolean = false;
   @Input() loading: boolean = false;
-  @Output() codeChanged = new EventEmitter<string>();
+  @Output() codeChanged = new EventEmitter<ShaderSource>();
 
   editorOptions: any = {
     theme: document.body.classList.contains('dark') ? 'glsl-dark' : 'glsl-light',
@@ -56,29 +58,35 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     '\tgl_FragColor = vec4(color, 1.0);\n' +
     '}\n';
 
-  mainCode: string = this.code;
-  bufferCode: Map<number, string> = new Map();
+  shaderSource: ShaderSource = { main: this.code, buffers: new Map() };
   bufferKeys: number[] = [];
 
   lastChange: number = 0;
   needsUpdate: boolean = false;
   changeInterval: any = null;
+  activeTabIndex: number = 0;
 
   constructor(
     private route: ActivatedRoute,
     private shaderService: ShaderService,
     private errorService: ErrorService,
+    private bufferService: BufferService,
     private elementRef: ElementRef,
     private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    this.codeChanged.emit(this.code);
+    this.codeChanged.emit(this.shaderSource);
     this.lastChange = new Date().getTime();
     this.changeInterval = setInterval(() => {
       if (this.needsUpdate && new Date().getTime() - this.lastChange > 1000) {
         this.needsUpdate = false;
-        this.codeChanged.emit(this.code);
+        if (this.activeTabIndex == 0) {
+          this.shaderSource.main = this.code;
+        } else {
+          this.shaderSource.buffers.set(this.bufferKeys[this.activeTabIndex - 1], this.code);
+        }
+        this.codeChanged.emit(this.shaderSource);
       }
     }, 1000);
 
@@ -89,19 +97,31 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     let path: string = '/' + this.route.snapshot.url.join('/');
     if (path !== '/shader/new') {
       let shaderId: string = this.route.snapshot.params['id'];
-      this.shaderService.getShaderById(shaderId).subscribe({
-        next: (shader: Shader) => {
-          if (shader.shaderCode !== undefined) {
-            this.code = shader.shaderCode;
-            this.mainCode = shader.shaderCode;
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          this.code = '// Shader could not be loaded\n\n' + 'void main() {}';
-          this.errorService.showError(error);
-          console.error(error.message);
-        },
-      });
+      forkJoin([
+        this.shaderService.getShaderById(shaderId),
+        this.bufferService.getAllBuffersWithShaderId(shaderId),
+      ])
+        .pipe(
+          map(([shader, loadedBuffers]) => {
+            if (shader.shaderCode !== undefined) {
+              this.code = shader.shaderCode;
+              const buffersMap = new Map();
+              loadedBuffers.forEach((buffer) => {
+                buffersMap.set(buffer.bufferKey, buffer.bufferCode);
+              });
+              this.shaderSource = { main: shader.shaderCode, buffers: buffersMap };
+              this.updateBufferKeys();
+            }
+          })
+        )
+        .subscribe({
+          next: () => {},
+          error: (error: HttpErrorResponse) => {
+            this.code = '// Shader could not be loaded\n\n' + 'void main() {}';
+            this.errorService.showError(error);
+            console.error(error.message);
+          },
+        });
     }
     this.elementRef.nativeElement.style.setProperty('--line-count', this.code.split('\n').length);
   }
@@ -117,10 +137,12 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   }
 
   onTabChanged(event: MatTabChangeEvent): void {
+    this.activeTabIndex = event.index;
     if (event.index == 0) {
-      this.code = this.mainCode;
+      this.code = this.shaderSource.main;
     } else {
-      this.code = this.bufferCode.get(this.bufferKeys[event.index - 1]) ?? '// Code not found';
+      this.code =
+        this.shaderSource.buffers.get(this.bufferKeys[event.index - 1]) ?? '// Code not found';
     }
   }
 
@@ -130,11 +152,11 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
     do {
       bufferIndex++;
-      buffer = this.bufferCode.get(bufferIndex);
+      buffer = this.shaderSource.buffers.get(bufferIndex);
     } while (buffer !== undefined);
 
-    this.bufferCode.set(bufferIndex, `// Buffer ${bufferIndex}\nvoid main() {}`);
-    this.bufferKeys = [...this.bufferCode.keys()];
+    this.shaderSource.buffers.set(bufferIndex, `// Buffer ${bufferIndex}\nvoid main() {}`);
+    this.updateBufferKeys();
   }
 
   onBufferContextmenu(event: MouseEvent, bufferIndex: number): void {
@@ -149,15 +171,19 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
   onBufferDelete(bufferIndex: number): void {
     const dialogRef = this.dialog.open(ShaderBufferDeleteDialogComponent, {
-      data: { bufferIndex: bufferIndex, buffers: this.bufferCode },
+      data: { bufferIndex: bufferIndex, buffers: this.shaderSource.buffers },
       width: '600px',
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.bufferCode.delete(result.bufferIndex);
-        this.bufferKeys = [...this.bufferCode.keys()];
+        this.shaderSource.buffers?.delete(result.bufferIndex);
+        this.updateBufferKeys();
       }
     });
+  }
+
+  updateBufferKeys(): void {
+    this.bufferKeys = [...this.shaderSource.buffers.keys()];
   }
 }

@@ -4,11 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Like } from '../../model/like';
 import { Shader } from '../../model/shader';
 import { User } from '../../model/user';
-import { Auth, AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { ErrorService } from '../../service/error.service';
 import { LikeService } from '../../service/like.service';
 import { ShaderService } from '../../service/shader.service';
 import { UserService } from '../../service/user.service';
+import { ShaderSource } from '../../model/shader-source';
 
 @Component({
   selector: 'app-shader-viewer',
@@ -16,7 +17,7 @@ import { UserService } from '../../service/user.service';
   styleUrls: ['./shader-viewer.component.css'],
 })
 export class ShaderViewerComponent implements OnInit {
-  shaderCode: string = 'void main() {}';
+  shaderCode: ShaderSource = { main: 'void main() {}', buffers: new Map() };
   shaderTitle: string = 'Title';
   shaderId: string = '00000000-0000-0000-0000-000000000000';
   author: string = 'Author';
@@ -46,7 +47,7 @@ export class ShaderViewerComponent implements OnInit {
             shader.shaderCode !== undefined &&
             shader.title !== undefined
           ) {
-            this.shaderCode = shader.shaderCode;
+            this.shaderCode.main = shader.shaderCode;
             this.shaderTitle = shader.title;
             this.userService.getUserById(shader.authorId).subscribe({
               next: (user: User) => {

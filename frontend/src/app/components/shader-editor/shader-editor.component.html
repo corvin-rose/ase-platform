@@ -6,6 +6,7 @@
   <div class="shader-preview-container" #shaderPreviewContainer>
     <app-shader-renderer
       [shader]="shader"
+      [renderId]="renderId()"
       (onMessage)="onMessage($event)"
       (onCompile)="onCompile($event)"
     ></app-shader-renderer>

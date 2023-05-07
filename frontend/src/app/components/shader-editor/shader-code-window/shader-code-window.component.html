@@ -20,7 +20,7 @@
         </div>
       </ng-template>
     </mat-tab>
-    <mat-tab disabled *ngIf="bufferCode.size < 4 && !readOnly">
+    <mat-tab disabled *ngIf="shaderSource.buffers.size < 4 && !readOnly">
       <ng-template mat-tab-label>
         <button mat-icon-button (click)="onAddBuffer()" style="transform: translateX(-16px)">
           <mat-icon>add</mat-icon>
