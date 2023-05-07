@@ -7,8 +7,16 @@ const DEFAULT_ERROR: string = 'A technical error has been occurred';
 @Injectable({
   providedIn: 'root',
 })
-export class ErrorService {
+export class SnackbarService {
   constructor(private snackBar: MatSnackBar) {}
+
+  showCustomMessage(message: string): void {
+    this.snackBar.open(message, 'Close', {
+      horizontalPosition: 'center',
+      verticalPosition: 'top',
+      duration: 5000,
+    });
+  }
 
   showError(httpError: HttpErrorResponse): void {
     let message = '';
@@ -25,7 +33,7 @@ export class ErrorService {
       horizontalPosition: 'center',
       verticalPosition: 'top',
       duration: 5000,
-      panelClass: ['snackbar'],
+      panelClass: ['snackbar-error'],
     });
   }
 }

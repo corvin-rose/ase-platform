@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { Like } from '../../model/like';
 import { Shader } from '../../model/shader';
 import { User } from '../../model/user';
-import { Auth, AuthService } from '../../service/auth.service';
-import { ErrorService } from '../../service/error.service';
+import { AuthService } from '../../service/auth.service';
+import { SnackbarService } from '../../service/snackbar.service';
 import { LikeService } from '../../service/like.service';
 import { ShaderService } from '../../service/shader.service';
 
@@ -20,7 +20,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private likeService: LikeService,
     private shaderService: ShaderService,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private authService: AuthService
   ) {}
 

@@ -76,6 +76,14 @@ class AuthService {
     }
 
     /** @throws Exception */
+    public function changePasswordForUser(string $userId, string $newPassword): void {
+        $newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+        $this->dbConnection->runSql(
+            "UPDATE ase_user SET password = '$newPasswordHash' WHERE id = '$userId'"
+        );
+    }
+
+    /** @throws Exception */
     public function authStatus(): \stdClass {
         $jwt = $_SERVER["HTTP_AUTHORIZATION"] ?? $_SERVER["HTTP_ACCESS_TOKEN"];
         if ($jwt === null) {

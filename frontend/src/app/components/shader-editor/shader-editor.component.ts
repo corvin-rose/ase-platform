@@ -15,7 +15,7 @@ import { ShaderDeleteDialogComponent } from './shader-delete-dialog/shader-delet
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from '../../service/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ErrorService } from '../../service/error.service';
+import { SnackbarService } from '../../service/snackbar.service';
 import { ShaderSettingsDialogComponent } from './shader-settings-dialog/shader-settings-dialog.component';
 import { CanComponentLeave } from '../../guards/leave-page-guard';
 import { forkJoin, map, Observable } from 'rxjs';
@@ -52,7 +52,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     private route: ActivatedRoute,
     private cdref: ChangeDetectorRef,
     private router: Router,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private authService: AuthService,
     private bufferService: BufferService
   ) {}

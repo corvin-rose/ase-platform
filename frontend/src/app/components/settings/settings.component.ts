@@ -2,8 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { User } from '../../model/user';
-import { Auth, AuthService } from '../../service/auth.service';
-import { ErrorService } from '../../service/error.service';
+import { AuthService } from '../../service/auth.service';
+import { SnackbarService } from '../../service/snackbar.service';
 import { UserService } from '../../service/user.service';
 
 @Component({
@@ -21,7 +21,7 @@ export class SettingsComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private errorService: ErrorService
+    private errorService: SnackbarService
   ) {}
 
   ngOnInit(): void {

@@ -10,6 +10,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { AuthGuard } from './guards/auth-guard';
 import { ShaderGuard } from './guards/shader-guard';
 import { LeavePageGuard } from './guards/leave-page-guard';
+import { PasswordResetComponent } from './components/auth/password-reset/password-reset.component';
 
 const routes: Routes = [
   { path: '', canActivate: [AuthGuard], component: ShaderListComponent },
@@ -20,6 +21,8 @@ const routes: Routes = [
   },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'password/reset', component: PasswordResetComponent },
+  { path: 'password/reset/token/:token', component: PasswordResetComponent },
   {
     path: 'shader/new',
     canActivate: [AuthGuard],

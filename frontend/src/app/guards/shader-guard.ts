@@ -10,7 +10,7 @@ import {
 import { Observable } from 'rxjs';
 import { Shader } from '../model/shader';
 import { AuthService } from '../service/auth.service';
-import { ErrorService } from '../service/error.service';
+import { SnackbarService } from '../service/snackbar.service';
 import { ShaderService } from '../service/shader.service';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class ShaderGuard implements CanActivate {
   constructor(
     private router: Router,
     private shaderService: ShaderService,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private authService: AuthService
   ) {}
 

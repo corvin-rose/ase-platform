@@ -1,13 +1,13 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ShaderService } from '../../service/shader.service';
 import { Shader } from '../../model/shader';
 import { User } from '../../model/user';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../service/user.service';
-import { ErrorService } from '../../service/error.service';
+import { SnackbarService } from '../../service/snackbar.service';
 import { LikeService } from '../../service/like.service';
 import { Like } from '../../model/like';
-import { Auth, AuthService } from '../../service/auth.service';
+import { AuthService } from '../../service/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 
@@ -31,7 +31,7 @@ export class ShaderListComponent implements OnInit {
   constructor(
     private shaderService: ShaderService,
     private userService: UserService,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private likeService: LikeService,
     private route: ActivatedRoute,
     private authService: AuthService

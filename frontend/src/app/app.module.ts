@@ -21,6 +21,7 @@ import { ShaderCreateDialogComponent } from './components/shader-editor/shader-c
 import { MatDialogModule } from '@angular/material/dialog';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { PasswordResetComponent } from './components/auth/password-reset/password-reset.component';
 import { HttpInterceptorService } from './service/http-interceptor.service';
 import { ShaderViewerComponent } from './components/shader-viewer/shader-viewer.component';
 import { ShaderDeleteDialogComponent } from './components/shader-editor/shader-delete-dialog/shader-delete-dialog.component';
@@ -57,6 +58,7 @@ const monacoConfig: NgxMonacoEditorConfig = {
     ShaderCreateDialogComponent,
     LoginComponent,
     RegisterComponent,
+    PasswordResetComponent,
     ShaderViewerComponent,
     ShaderDeleteDialogComponent,
     ShaderSettingsDialogComponent,

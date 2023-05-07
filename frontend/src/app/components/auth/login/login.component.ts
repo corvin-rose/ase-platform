@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Token } from '../../../model/token';
 import { User } from '../../../model/user';
 import { AuthService } from '../../../service/auth.service';
-import { ErrorService } from '../../../service/error.service';
+import { SnackbarService } from '../../../service/snackbar.service';
 import { UserService } from '../../../service/user.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class LoginComponent {
     private router: Router,
     private userService: UserService,
     private authService: AuthService,
-    private errorService: ErrorService
+    private errorService: SnackbarService
   ) {}
 
   onSubmit(form: NgForm): void {

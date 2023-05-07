@@ -10,7 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ErrorService } from '../../../service/error.service';
+import { SnackbarService } from '../../../service/snackbar.service';
 import { ShaderService } from '../../../service/shader.service';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -69,7 +69,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private shaderService: ShaderService,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private bufferService: BufferService,
     private elementRef: ElementRef,
     private dialog: MatDialog

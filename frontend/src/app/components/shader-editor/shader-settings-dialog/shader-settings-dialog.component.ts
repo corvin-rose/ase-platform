@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Shader } from '../../../model/shader';
-import { ErrorService } from '../../../service/error.service';
+import { SnackbarService } from '../../../service/snackbar.service';
 import { ShaderService } from '../../../service/shader.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class ShaderSettingsDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<ShaderSettingsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: string,
     private shaderService: ShaderService,
-    private errorService: ErrorService
+    private errorService: SnackbarService
   ) {}
 
   ngOnInit(): void {

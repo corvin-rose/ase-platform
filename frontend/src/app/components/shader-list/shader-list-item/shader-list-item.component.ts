@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { Like } from '../../../model/like';
-import { Auth, AuthService } from '../../../service/auth.service';
-import { ErrorService } from '../../../service/error.service';
+import { AuthService } from '../../../service/auth.service';
+import { SnackbarService } from '../../../service/snackbar.service';
 import { LikeService } from '../../../service/like.service';
 import { User } from '../../../model/user';
 
@@ -23,7 +23,7 @@ export class ShaderListItemComponent implements OnInit {
 
   constructor(
     private likeService: LikeService,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private authService: AuthService
   ) {}
 

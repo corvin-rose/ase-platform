@@ -34,10 +34,10 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.snackbar {
+.snackbar-error {
   background: var(--color-warn) !important;
 }
-.snackbar span {
+.snackbar-error span {
   color: #fff;
   font-weight: 400;
 }

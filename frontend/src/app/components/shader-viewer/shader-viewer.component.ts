@@ -5,7 +5,7 @@ import { Like } from '../../model/like';
 import { Shader } from '../../model/shader';
 import { User } from '../../model/user';
 import { AuthService } from '../../service/auth.service';
-import { ErrorService } from '../../service/error.service';
+import { SnackbarService } from '../../service/snackbar.service';
 import { LikeService } from '../../service/like.service';
 import { ShaderService } from '../../service/shader.service';
 import { UserService } from '../../service/user.service';
@@ -31,7 +31,7 @@ export class ShaderViewerComponent implements OnInit {
     private route: ActivatedRoute,
     private shaderService: ShaderService,
     private userService: UserService,
-    private errorService: ErrorService,
+    private errorService: SnackbarService,
     private likeService: LikeService,
     private authService: AuthService
   ) {}

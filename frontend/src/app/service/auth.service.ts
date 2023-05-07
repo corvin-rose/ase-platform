@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Token } from '../model/token';
 import { User } from '../model/user';
-import { ErrorService } from './error.service';
+import { SnackbarService } from './snackbar.service';
 import { UserService } from './user.service';
 
 @Injectable({
@@ -12,11 +12,7 @@ import { UserService } from './user.service';
 export class AuthService {
   static SESSION_FIELD = 'session_id';
 
-  constructor(
-    private userService: UserService,
-    private errorService: ErrorService,
-    private router: Router
-  ) {
+  constructor(private userService: UserService, private errorService: SnackbarService) {
     Auth.token = localStorage.getItem(AuthService.SESSION_FIELD);
     this.getUserAfterAuth();
   }
