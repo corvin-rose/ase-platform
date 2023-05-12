@@ -25,8 +25,10 @@ export class ShaderListComponent implements OnInit {
   loading: boolean = true;
 
   user: User | null = null;
+  filter: (s: Shader) => boolean = () => true;
 
-  @Input() filter: (s: Shader) => boolean = () => true;
+  @Input() showSearchbar: boolean = true;
+  @Input() userScope: boolean = false;
 
   constructor(
     private shaderService: ShaderService,
@@ -38,8 +40,6 @@ export class ShaderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getShaders();
-
     this.route.params.subscribe((params) => {
       const query = params['query'];
       if (query !== undefined) {
@@ -47,15 +47,30 @@ export class ShaderListComponent implements OnInit {
           return shader.title?.toLowerCase().indexOf(query.toLowerCase()) !== -1;
         };
         this.getShaders();
+        this.loading = true;
       }
     });
-    this.authService.getUserAfterAuth().then((user) => (this.user = user));
+
+    this.authService.getUserAfterAuth().then((user) => {
+      this.user = user;
+      if (this.userScope) {
+        this.filter = (shader: Shader) => {
+          const userId = user?.id ? user?.id : '-1';
+          return shader.authorId === userId;
+        };
+        this.getShaders();
+      }
+    });
+
+    if (!this.userScope && this.route.snapshot.params['query'] === undefined) {
+      this.getShaders();
+    }
   }
 
   getShaders(): void {
     this.shaderService.getShaders().subscribe({
       next: (response: Shader[]) => {
-        this.shaders = response.filter((v) => this.matchesFilter(v));
+        this.shaders = response.filter((v) => this.filter(v));
         this.getUsers(this.shaders.map((v) => (v.authorId ? v.authorId : '-1')));
         this.getLikes();
         this.loading = false;
@@ -144,9 +159,5 @@ export class ShaderListComponent implements OnInit {
 
   getUserHasLikedShader(shaderId: string | undefined): boolean {
     return shaderId !== undefined && this.currentUserLikes.get(shaderId) !== undefined;
-  }
-
-  matchesFilter(shader: Shader): boolean {
-    return this.filter(shader);
   }
 }

@@ -1,13 +1,12 @@
 .search-form mat-form-field {
-    width: 100%;
+  width: 100%;
 }
-:host ::ng-deep .search-form .mat-form-field-wrapper {
-    padding: 0;
-    margin: 0;
+:host ::ng-deep .search-form .mat-mdc-form-field-subscript-wrapper {
+  display: none;
 }
 .search-form .search-icon {
-    padding-right: 5px;
+  padding: 0 5px 0 10px;
 }
 .search-form .search-input {
-    transform: translateY(-2px);
+  transform: translateY(-2px);
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Auth, AuthService } from '../../../service/auth.service';
+import { AuthService } from '../../../service/auth.service';
 import { User } from '../../../model/user';
 
 @Component({
@@ -10,11 +10,15 @@ import { User } from '../../../model/user';
 })
 export class ProfileIconComponent implements OnInit {
   user: User | null = null;
+  loading: boolean = true;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    this.authService.getUserAfterAuth().then((user) => (this.user = user));
+    this.authService.getUserAfterAuth().then((user) => {
+      this.user = user;
+      this.loading = false;
+    });
   }
 
   userLoggedIn(): boolean {
@@ -35,6 +39,6 @@ export class ProfileIconComponent implements OnInit {
         return fChar + lChar;
       }
     }
-    return 'U';
+    return '';
   }
 }

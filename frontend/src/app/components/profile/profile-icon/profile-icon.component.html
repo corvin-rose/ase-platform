@@ -7,7 +7,7 @@
   color="primary"
   [matMenuTriggerFor]="profileMenu"
   aria-label="Profile"
-  style="background: var(--color-primary)"
+  [class]="loading ? 'profile-button-loading' : 'profile-button'"
 >
   <span class="name">{{ getProfileIconLetters() }}</span>
 </button>

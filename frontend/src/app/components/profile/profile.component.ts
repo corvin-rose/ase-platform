@@ -48,13 +48,8 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  getFilter(shader: Shader): boolean {
-    const user = this.user?.id ? this.user?.id : '-1';
-    return shader.authorId === user;
-  }
-
   getUsername(): string {
-    return this.user?.firstName + ' ' + this.user?.lastName;
+    return (this.user?.firstName ?? 'User') + ' ' + (this.user?.lastName ?? '');
   }
 
   getLikes(): number {
@@ -70,6 +65,6 @@ export class ProfileComponent implements OnInit {
         return fChar + lChar;
       }
     }
-    return 'U';
+    return '';
   }
 }

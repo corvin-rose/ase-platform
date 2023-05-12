@@ -1,17 +1,28 @@
 mat-card {
-    overflow: hidden;
+  overflow: hidden;
 }
 mat-card-title {
-    font-size: 18px;
+  font-size: 18px;
+  line-height: 20px;
 }
-.shader-preview {
-    aspect-ratio: 16/9;
-}
-mat-card-content {
-    position: relative;
+.shader-preview,
+.shader-preview img {
+  width: 100%;
+  aspect-ratio: 16/9;
 }
 .like-btn {
-    position: absolute;
-    right: -8px;
-    top: -8px;
+  display: flex;
+  align-items: center;
+  transform: translate(12px, -2px);
+}
+.like-btn span {
+  transform: translateX(4px);
+}
+.title-like-wrapper {
+  display: flex;
+  align-items: start;
+}
+.shader-info {
+  padding-top: 12px;
+  flex-grow: 1;
 }

@@ -1,35 +1,37 @@
 .content {
-    display: grid;
-    grid-template-columns: 5fr 3fr;
-    grid-gap: 20px;
-    width: 100%;
-    height: var(--content-height);
+  display: grid;
+  grid-template-columns: 5fr 3fr;
+  grid-gap: 20px;
+  width: 100%;
+  height: var(--content-height);
 }
 @media (max-width: 832px) {
-    .content {
-        display: flex;
-        flex-direction: column-reverse;
-        gap: 20px;
-        width: 100%;
-        height: auto;
-    }
+  .content {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 20px;
+    width: 100%;
+    height: auto;
+  }
 }
 .shader-preview-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    max-height: var(--content-height);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: var(--content-height);
 }
 .shader-details {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
 }
 .shader-details h2 {
-    margin: 0;
+  margin: 0;
 }
 .like-btn {
-    position: absolute;
-    right: -3px;
-    top: -3px;
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  display: flex;
+  align-items: center;
 }

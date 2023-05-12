@@ -1,15 +1,15 @@
 <div class="profile-container">
-    <div class="details">
-        <div class="icon">
-            <span id="profile-icon">{{ getProfileIconLetters() }}</span>
-        </div>
-        <div>
-            <h2 id="name">{{ getUsername() }}</h2>
-            <p id="likes">{{ getLikes() }} Likes</p>
-        </div>
+  <div class="details">
+    <div class="icon">
+      <span id="profile-icon">{{ getProfileIconLetters() }}</span>
     </div>
+    <div>
+      <h2 id="name">{{ getUsername() }}</h2>
+      <p id="likes">{{ getLikes() }} Likes</p>
+    </div>
+  </div>
 </div>
 <div class="shader-overview">
-    <h2>My Shaders</h2>
-    <app-shader-list [filter]="getFilter"></app-shader-list>
+  <h2>My Shaders</h2>
+  <app-shader-list [userScope]="true" [showSearchbar]="false"></app-shader-list>
 </div>

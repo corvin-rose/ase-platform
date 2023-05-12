@@ -1,6 +1,29 @@
+.profile-button {
+  background: var(--color-primary);
+}
+.profile-button-loading {
+  background: #5b5b5b;
+  animation: profile-button-pulse 1.5s ease-in-out infinite;
+}
+@keyframes profile-button-pulse {
+  0% {
+    opacity: 0;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 .name {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   text-transform: uppercase;
   color: #fff;
+  font-size: 18px;
 }
 a {
   text-decoration: none;

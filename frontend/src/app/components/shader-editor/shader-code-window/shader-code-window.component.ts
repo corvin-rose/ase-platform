@@ -160,6 +160,10 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   }
 
   onBufferContextmenu(event: MouseEvent, bufferIndex: number): void {
+    if (this.readOnly) {
+      return;
+    }
+
     event.preventDefault();
     this.menuTopLeftPosition.x = event.clientX;
     this.menuTopLeftPosition.y = event.clientY;

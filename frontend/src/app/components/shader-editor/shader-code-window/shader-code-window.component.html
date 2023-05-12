@@ -5,26 +5,34 @@
     [style.top.px]="menuTopLeftPosition.y"
     [matMenuTriggerFor]="rightMenu"
   ></div>
-  <mat-tab-group mat-align-tabs="start" (selectedTabChange)="onTabChanged($event)">
+  <mat-tab-group
+    mat-align-tabs="start"
+    mat-stretch-tabs="false"
+    (selectedTabChange)="onTabChanged($event)"
+  >
     <mat-tab>
       <ng-template mat-tab-label>
-        <mat-icon class="example-tab-icon">collections</mat-icon>
-        <span>Main</span>
+        <div class="editor-tab">
+          <mat-icon>collections</mat-icon>
+          <span>Main</span>
+        </div>
       </ng-template>
     </mat-tab>
     <mat-tab *ngFor="let buffer of bufferKeys">
       <ng-template mat-tab-label>
-        <div class="mat-tab-label-content" (contextmenu)="onBufferContextmenu($event, buffer)">
-          <mat-icon class="example-tab-icon">filter_none</mat-icon>
+        <div class="editor-tab" (contextmenu)="onBufferContextmenu($event, buffer)">
+          <mat-icon>filter_none</mat-icon>
           <span>Buffer {{ buffer }}</span>
         </div>
       </ng-template>
     </mat-tab>
     <mat-tab disabled *ngIf="shaderSource.buffers.size < 4 && !readOnly">
       <ng-template mat-tab-label>
-        <button mat-icon-button (click)="onAddBuffer()" style="transform: translateX(-16px)">
-          <mat-icon>add</mat-icon>
-        </button>
+        <div class="editor-tab">
+          <button mat-icon-button (click)="onAddBuffer()" style="transform: translateX(-16px)">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
       </ng-template>
     </mat-tab>
   </mat-tab-group>
