@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Like } from '../model/like';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ import { Like } from '../model/like';
 export class LikeService {
   private apiServerUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpService) {}
 
   public getAllLikes(): Observable<Like[]> {
     return this.http.get<Like[]>(`${this.apiServerUrl}/likes`);

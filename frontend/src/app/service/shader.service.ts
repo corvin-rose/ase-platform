@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Shader } from '../model/shader';
 import { environment } from '../../environments/environment';
+import { HttpService } from './http.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,7 @@ import { environment } from '../../environments/environment';
 export class ShaderService {
   private apiServerUrl = environment.apiBaseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpService) {}
 
   public getShaders(): Observable<Shader[]> {
     return this.http.get<Shader[]>(`${this.apiServerUrl}/shader`);
