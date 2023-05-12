@@ -41,6 +41,11 @@ class BufferController extends BaseController {
         $authStatus = $this->authService->authStatus();
         $requestBody = file_get_contents("php://input");
         $buffers = array_map(fn($b) => BufferModel::fromJsonObject($b), json_decode($requestBody));
+
+        if (sizeof($buffers) == 0) {
+            return new ResponseEntity(true, HttpStatus::OK());
+        }
+
         $shaderId = $this->bufferService->findShaderIdWithBuffers($buffers);
         $shader = $this->shaderService->findShaderById($shaderId);
         $user = $this->authService->findUserByEmail($authStatus->userName);

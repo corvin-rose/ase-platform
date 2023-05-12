@@ -73,10 +73,10 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
             if (shader.shaderCode !== undefined) {
               const buffersMap = new Map();
               loadedBuffers.forEach((buffer) => {
-                buffersMap.set(buffer.bufferKey, buffer.bufferCode);
+                buffersMap.set(parseInt(buffer.bufferKey), buffer.bufferCode);
               });
               this.shader = { main: shader.shaderCode, buffers: buffersMap };
-              this.oldShaderCode = this.shader;
+              this.assignOldShaderCode(this.shader);
             }
           })
         )
@@ -194,7 +194,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
           ]).subscribe({
             next: () => {
               this.loading = false;
-              Object.assign(this.oldShaderCode, this.shader);
+              this.assignOldShaderCode(this.shader);
             },
             error: (error) => this.disableLoadingAndProcessError(error),
           });
@@ -256,9 +256,23 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
 
   userMadeChanges(): boolean {
     return (
-      this.oldShaderCode.main != this.shader.main &&
-      this.oldShaderCode.buffers.values() != this.shader.buffers.values()
+      this.oldShaderCode.main != this.shader.main ||
+      [...this.oldShaderCode.buffers.values()].length != [...this.shader.buffers.values()].length ||
+      [...this.oldShaderCode.buffers.values()]
+        .map((v, i) => [...this.shader.buffers.values()][i] != v)
+        .reduce((a, b) => a || b)
     );
+  }
+
+  assignOldShaderCode(newShaderCode: ShaderSource): void {
+    const buffersMap = new Map();
+    [...newShaderCode.buffers.entries()].forEach(([bufferKey, bufferCode]) => {
+      buffersMap.set(bufferKey, bufferCode);
+    });
+    this.oldShaderCode = {
+      main: newShaderCode.main,
+      buffers: buffersMap,
+    };
   }
 
   canLeave(): boolean | Observable<boolean> | Promise<boolean> {

@@ -19,6 +19,7 @@ import { ShaderBufferDeleteDialogComponent } from '../shader-buffer-delete-dialo
 import { ShaderSource } from '../../../model/shader-source';
 import { forkJoin, map } from 'rxjs';
 import { BufferService } from '../../../service/buffer.service';
+import { MatLegacyTabGroup } from '@angular/material/legacy-tabs';
 
 @Component({
   selector: 'app-shader-code-window',
@@ -107,7 +108,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
               this.code = shader.shaderCode;
               const buffersMap = new Map();
               loadedBuffers.forEach((buffer) => {
-                buffersMap.set(buffer.bufferKey, buffer.bufferCode);
+                buffersMap.set(parseInt(buffer.bufferKey), buffer.bufferCode);
               });
               this.shaderSource = { main: shader.shaderCode, buffers: buffersMap };
               this.updateBufferKeys();
@@ -146,7 +147,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     }
   }
 
-  onAddBuffer(): void {
+  onAddBuffer(tabGroup: MatLegacyTabGroup): void {
     let bufferIndex = 0;
     let buffer = undefined;
 
@@ -157,6 +158,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
     this.shaderSource.buffers.set(bufferIndex, `// Buffer ${bufferIndex}\nvoid main() {}`);
     this.updateBufferKeys();
+    tabGroup.selectedIndex = bufferIndex;
   }
 
   onBufferContextmenu(event: MouseEvent, bufferIndex: number): void {

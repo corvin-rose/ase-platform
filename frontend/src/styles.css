@@ -35,11 +35,10 @@ body {
 }
 
 .snackbar-error {
-  background: var(--color-warn) !important;
+  --mdc-snackbar-container-color: var(--color-warn) !important;
 }
-.snackbar-error span {
-  color: #fff;
-  font-weight: 400;
+.snackbar-error * {
+  color: #fff !important;
 }
 
 /* Scrollbar */

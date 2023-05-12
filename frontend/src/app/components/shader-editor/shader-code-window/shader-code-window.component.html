@@ -9,6 +9,7 @@
     mat-align-tabs="start"
     mat-stretch-tabs="false"
     (selectedTabChange)="onTabChanged($event)"
+    #tabGroup
   >
     <mat-tab>
       <ng-template mat-tab-label>
@@ -29,7 +30,11 @@
     <mat-tab disabled *ngIf="shaderSource.buffers.size < 4 && !readOnly">
       <ng-template mat-tab-label>
         <div class="editor-tab">
-          <button mat-icon-button (click)="onAddBuffer()" style="transform: translateX(-16px)">
+          <button
+            mat-icon-button
+            (click)="onAddBuffer(tabGroup)"
+            style="transform: translateX(-16px)"
+          >
             <mat-icon>add</mat-icon>
           </button>
         </div>
