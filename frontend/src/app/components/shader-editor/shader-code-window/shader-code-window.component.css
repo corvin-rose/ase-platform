@@ -25,7 +25,8 @@ mat-tab-group {
   gap: 4px;
   height: 100%;
 }
-:host ::ng-deep .mat-mdc-tab-body-wrapper {
+:host ::ng-deep .mat-mdc-tab-body-wrapper,
+:host ::ng-deep .mat-mdc-tab-disabled .mdc-tab__ripple {
   display: none !important;
 }
 :host ::ng-deep .mdc-tab {

@@ -58,7 +58,7 @@
 
 <mat-menu #rightMenu="matMenu">
   <ng-template matMenuContent let-buffer="buffer">
-    <button mat-menu-item class="menu-warn" (click)="onBufferDelete(buffer)">
+    <button mat-menu-item class="menu-warn" (click)="onBufferDelete(buffer, tabGroup)">
       <mat-icon>delete</mat-icon>
       <span>Delete</span>
     </button>

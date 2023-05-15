@@ -154,7 +154,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     do {
       bufferIndex++;
       buffer = this.shaderSource.buffers.get(bufferIndex);
-    } while (buffer !== undefined);
+    } while (buffer !== undefined && buffer !== null);
 
     this.shaderSource.buffers.set(bufferIndex, `// Buffer ${bufferIndex}\nvoid main() {}`);
     this.updateBufferKeys();
@@ -175,7 +175,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
     }
   }
 
-  onBufferDelete(bufferIndex: number): void {
+  onBufferDelete(bufferIndex: number, tabGroup: MatLegacyTabGroup): void {
     const dialogRef = this.dialog.open(ShaderBufferDeleteDialogComponent, {
       data: { bufferIndex: bufferIndex, buffers: this.shaderSource.buffers },
       width: '600px',
@@ -183,13 +183,17 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.shaderSource.buffers?.delete(result.bufferIndex);
+        this.shaderSource.buffers.set(result.bufferIndex, null);
+        this.codeChanged.emit(this.shaderSource);
         this.updateBufferKeys();
+        tabGroup.selectedIndex = 0;
       }
     });
   }
 
   updateBufferKeys(): void {
-    this.bufferKeys = [...this.shaderSource.buffers.keys()];
+    this.bufferKeys = [
+      ...new Map([...this.shaderSource.buffers].filter(([k, v]) => v !== null)).keys(),
+    ].sort();
   }
 }

@@ -30,7 +30,8 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   bufferPrograms: {
     program: WebGLProgram | null;
     texture: WebGLTexture | null;
-    buffer: WebGLBuffer | null;
+    buffer: WebGLFramebuffer | null;
+    bufferKey: number;
   }[] = [];
   size: { x: number; y: number } = { x: 0, y: 0 };
   mousePos: { x: number; y: number } = { x: 0, y: 0 };
@@ -88,6 +89,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     const gl: WebGL2RenderingContext | WebGLRenderingContext = createGl;
     const newGlVersion: boolean = !(gl instanceof WebGLRenderingContext);
 
+    // Basic shader code setup
     const shaderVersion = newGlVersion ? '#version 300 es' : '';
     const vertexPositions = newGlVersion
       ? 'layout(location = 0) in vec2 position;'
@@ -133,6 +135,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
     this.shaderLineOffset = fShaderSetup.split('\n').length;
 
+    // Create vertex buffer
     const vertexBufferData: Float32Array = new Float32Array([
       -1.0, 1.0, 0.0, -1.0, -1.0, 0.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0,
     ]);
@@ -148,11 +151,20 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indexData, gl.STATIC_DRAW);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
+    // Delete old buffer programs
+    for (const bufferProgram of this.bufferPrograms) {
+      gl.deleteFramebuffer(bufferProgram.buffer);
+      gl.deleteTexture(bufferProgram.texture);
+      gl.deleteProgram(bufferProgram.program);
+    }
     this.bufferPrograms = [];
-    for (let key of this.shader.buffers.keys()) {
+
+    // Create new buffer programs
+    const filteredBuffers = new Map([...this.shader.buffers].filter(([k, v]) => v !== null));
+    for (let key of filteredBuffers.keys()) {
       const bufferShaderSrc = `${fShaderSetup}
                                ${this.shader.main.replace(/void\s+main\s*\([^)]*\)/, 'void _()')}
-                               ${this.shader.buffers.get(key)}`;
+                               ${filteredBuffers.get(key)}`;
 
       const fragShader = this.createShader(gl, bufferShaderSrc, gl.FRAGMENT_SHADER);
       const vertShader = this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
@@ -192,9 +204,11 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
         program: bufferProgram,
         texture: bufferTexture,
         buffer: buffer,
+        bufferKey: key,
       });
     }
 
+    // Create main program
     const fragShader = this.createShader(gl, fShaderSrc, gl.FRAGMENT_SHADER);
     const vertShader = this.createShader(gl, vShaderSrc, gl.VERTEX_SHADER);
     if (fragShader === null || vertShader === null) {
@@ -207,9 +221,12 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.clearColor(0, 0, 0, 1);
     gl.viewport(0, 0, this.size.x, this.size.y);
 
-    this.bufferPrograms.forEach((bufferProgram, i) => {
-      const bufferLocation = gl.getUniformLocation(this.program, `buffer${i + 1}`);
-      switch (i + 1) {
+    this.bufferPrograms.forEach((bufferProgram) => {
+      const bufferLocation = gl.getUniformLocation(
+        this.program,
+        `buffer${bufferProgram.bufferKey}`
+      );
+      switch (bufferProgram.bufferKey) {
         case 1:
           gl.uniform1i(bufferLocation, 1);
           gl.activeTexture(gl.TEXTURE1);

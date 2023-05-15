@@ -15,7 +15,7 @@ export class ShaderBufferDeleteDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.bufferKeys = [...this.data.buffers.keys()];
+    this.bufferKeys = [...this.data.buffers.keys()].sort();
   }
 
   onClose(): void {

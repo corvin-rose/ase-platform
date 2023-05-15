@@ -5,13 +5,13 @@ namespace Core\Domain\Model;
 class BufferModel {
     public ?string $id;
     public string $bufferKey;
-    public string $bufferCode;
+    public ?string $bufferCode;
     public string $shaderId;
 
     public function __construct(
         ?string $id,
         string $bufferKey,
-        string $bufferCode,
+        ?string $bufferCode,
         string $shaderId
     ) {
         $this->id = $id;

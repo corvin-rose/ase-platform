@@ -31,12 +31,19 @@ class BufferService {
 
         if ($this->shaderService->findShaderById($shaderId)) {
             foreach ($buffers as $buffer) {
-                $uuid = UUID::randomUUID();
-                $this->dbConnection
-                    ->runSql("INSERT INTO ase_buffer (id, buffer_key, buffer_code, shader_id) 
+                if ($buffer->bufferCode === null) {
+                    $this->dbConnection->runSql(
+                        "DELETE FROM ase_buffer 
+                             WHERE buffer_key = '$buffer->bufferKey' AND shader_id = '$shaderId'"
+                    );
+                } else {
+                    $uuid = UUID::randomUUID();
+                    $this->dbConnection
+                        ->runSql("INSERT INTO ase_buffer (id, buffer_key, buffer_code, shader_id) 
                         VALUES ('$uuid', '$buffer->bufferKey', '$buffer->bufferCode', '$buffer->shaderId')
                         ON DUPLICATE KEY UPDATE buffer_key = '$buffer->bufferKey', 
                                                 buffer_code = '$buffer->bufferCode';");
+                }
             }
             return true;
         }

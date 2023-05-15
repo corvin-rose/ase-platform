@@ -258,9 +258,12 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
     return (
       this.oldShaderCode.main != this.shader.main ||
       [...this.oldShaderCode.buffers.values()].length != [...this.shader.buffers.values()].length ||
-      [...this.oldShaderCode.buffers.values()]
-        .map((v, i) => [...this.shader.buffers.values()][i] != v)
-        .reduce((a, b) => a || b)
+      [
+        ...Array.of(this.oldShaderCode.buffers.values()).map(
+          (v, i) => Array.of(this.shader.buffers.values())[i] != v
+        ),
+        false,
+      ].reduce((a, b) => a || b)
     );
   }
 
@@ -297,7 +300,11 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
   renderId(): string {
     const shader =
       JSON.stringify(this.shader.main) +
-      JSON.stringify(['', ...this.shader.buffers.values()].reduce((a, b) => a + b));
+      JSON.stringify(
+        ['', ...this.shader.buffers.values()]
+          .map((v) => v ?? '')
+          .reduce((a: string, b: string) => a + b)
+      );
     return Array.from(shader)
       .reduce((s, c) => (Math.imul(31, s) + c.charCodeAt(0)) | 0, 0)
       .toString();
