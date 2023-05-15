@@ -12,6 +12,8 @@
   >
   </app-shader-list-item>
 
+  <div *ngIf="shaders.length === 0 && !loading"><p class="shaders-empty">No shaders found</p></div>
+
   <div *ngIf="loading" class="loader">
     <mat-spinner [diameter]="50"></mat-spinner>
   </div>

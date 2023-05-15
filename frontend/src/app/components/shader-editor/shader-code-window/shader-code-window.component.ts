@@ -158,7 +158,9 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
 
     this.shaderSource.buffers.set(bufferIndex, `// Buffer ${bufferIndex}\nvoid main() {}`);
     this.updateBufferKeys();
-    tabGroup.selectedIndex = bufferIndex;
+    setTimeout(() => {
+      tabGroup.selectedIndex = bufferIndex;
+    }, 100);
   }
 
   onBufferContextmenu(event: MouseEvent, bufferIndex: number): void {

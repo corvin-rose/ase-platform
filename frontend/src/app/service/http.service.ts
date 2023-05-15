@@ -10,35 +10,55 @@ export class HttpService {
 
   constructor(private http: HttpClient) {}
 
-  public get<T>(url: string): Observable<T> {
-    return this.requestRouteOrLoadFromCache<T>(`GET ${url}`, () => this.http.get<T>(url));
+  public get<T>(url: string, cached: boolean = false): Observable<T> {
+    return this.requestRouteOrLoadFromCache<T>(`GET ${url}`, () => this.http.get<T>(url), cached);
   }
 
-  public post<T>(url: string, body: any): Observable<T> {
-    return this.requestRouteOrLoadFromCache<T>(`POST ${url}`, () => this.http.post<T>(url, body));
+  public post<T>(url: string, body: any, cached: boolean = false): Observable<T> {
+    return this.requestRouteOrLoadFromCache<T>(
+      `POST ${url}`,
+      () => this.http.post<T>(url, body),
+      cached
+    );
   }
 
-  public put<T>(url: string, body: any): Observable<T> {
-    return this.requestRouteOrLoadFromCache<T>(`PUT ${url}`, () => this.http.put<T>(url, body));
+  public put<T>(url: string, body: any, cached: boolean = false): Observable<T> {
+    return this.requestRouteOrLoadFromCache<T>(
+      `PUT ${url}`,
+      () => this.http.put<T>(url, body),
+      cached
+    );
   }
 
-  public patch<T>(url: string, body: any): Observable<T> {
-    return this.requestRouteOrLoadFromCache<T>(`PATCH ${url}`, () => this.http.patch<T>(url, body));
+  public patch<T>(url: string, body: any, cached: boolean = false): Observable<T> {
+    return this.requestRouteOrLoadFromCache<T>(
+      `PATCH ${url}`,
+      () => this.http.patch<T>(url, body),
+      cached
+    );
   }
 
-  public delete<T>(url: string): Observable<T> {
-    return this.requestRouteOrLoadFromCache<T>(`DELETE ${url}`, () => this.http.delete<T>(url));
+  public delete<T>(url: string, cached: boolean = false): Observable<T> {
+    return this.requestRouteOrLoadFromCache<T>(
+      `DELETE ${url}`,
+      () => this.http.delete<T>(url),
+      cached
+    );
   }
 
-  private requestRouteOrLoadFromCache<T>(url: string, method: Function): Observable<T> {
+  private requestRouteOrLoadFromCache<T>(
+    url: string,
+    method: Function,
+    cached: boolean
+  ): Observable<T> {
     const cachedObject = this.getObjectFromCachedRoute(url);
-    if (cachedObject !== null && !(cachedObject instanceof HttpQueueObject)) {
+    if (cachedObject !== null && !(cachedObject instanceof HttpQueueObject) && cached) {
       return new Observable<T>((subscriber) => {
         subscriber.next(cachedObject as T);
         subscriber.complete();
       });
     }
-    if (cachedObject instanceof HttpQueueObject) {
+    if (cachedObject instanceof HttpQueueObject && cached) {
       return new Observable<T>((subscriber) => {
         let retries = 0;
         const interval = setInterval(() => {
@@ -71,7 +91,7 @@ export class HttpService {
   private getObjectFromCachedRoute(route: string): any | null {
     const cachedObject = this.httpCache.get(route);
     const currentTimestamp = Date.now();
-    if (cachedObject !== undefined && currentTimestamp - cachedObject.timestamp <= 10 * 1000) {
+    if (cachedObject !== undefined && currentTimestamp - cachedObject.timestamp <= 5 * 1000) {
       return cachedObject.object;
     }
     return null;

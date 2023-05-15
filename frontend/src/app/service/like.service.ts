@@ -13,15 +13,15 @@ export class LikeService {
   constructor(private http: HttpService) {}
 
   public getAllLikes(): Observable<Like[]> {
-    return this.http.get<Like[]>(`${this.apiServerUrl}/likes`);
+    return this.http.get<Like[]>(`${this.apiServerUrl}/likes`, true);
   }
 
   public getAllLikesByShaderId(id: string): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiServerUrl}/likes/shader/${id}`);
+    return this.http.get<string[]>(`${this.apiServerUrl}/likes/shader/${id}`, true);
   }
 
   public getAllLikesByUserId(id: string): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiServerUrl}/likes/user/${id}`);
+    return this.http.get<string[]>(`${this.apiServerUrl}/likes/user/${id}`, true);
   }
 
   public addLike(like: Like): Observable<Like> {

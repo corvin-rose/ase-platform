@@ -70,3 +70,6 @@ app-shader-list-item {
   align-items: center;
   justify-content: center;
 }
+.shaders-empty {
+  color: var(--color-hint);
+}

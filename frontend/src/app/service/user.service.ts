@@ -14,11 +14,11 @@ export class UserService {
   constructor(private http: HttpService) {}
 
   public getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiServerUrl}/user`);
+    return this.http.get<User[]>(`${this.apiServerUrl}/user`, true);
   }
 
   public getUserById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.apiServerUrl}/user/${id}`);
+    return this.http.get<User>(`${this.apiServerUrl}/user/${id}`, true);
   }
 
   public registerUser(user: User): Observable<User> {
@@ -30,7 +30,7 @@ export class UserService {
   }
 
   public authUser(token: Token): Observable<User> {
-    return this.http.post<User>(`${this.apiServerUrl}/user/auth`, token);
+    return this.http.post<User>(`${this.apiServerUrl}/user/auth`, token, true);
   }
 
   public updateUser(user: User): Observable<User> {

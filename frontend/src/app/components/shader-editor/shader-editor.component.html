@@ -20,7 +20,7 @@
           *ngIf="!loading"
           mat-raised-button
           color="primary"
-          [disabled]="!userMadeChanges()"
+          [disabled]="!userMadeChanges() || !loadedData"
           (click)="onSaveClick()"
         >
           Save
@@ -29,9 +29,13 @@
           <mat-spinner [diameter]="20"></mat-spinner>
         </button>
 
-        <button mat-raised-button color="warn" (click)="onDeleteClick()">Delete</button>
+        <button mat-raised-button color="warn" (click)="onDeleteClick()" [disabled]="!loadedData">
+          Delete
+        </button>
 
-        <button mat-raised-button (click)="onSettingsClick()">Settings</button>
+        <button mat-raised-button (click)="onSettingsClick()" [disabled]="!loadedData">
+          Settings
+        </button>
       </div>
 
       <div id="create-container" *ngIf="!editMode" class="button-container">

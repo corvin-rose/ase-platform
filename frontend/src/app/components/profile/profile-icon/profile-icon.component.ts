@@ -15,10 +15,16 @@ export class ProfileIconComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit() {
-    this.authService.getUserAfterAuth().then((user) => {
-      this.user = user;
-      this.loading = false;
-    });
+    this.loading = true;
+    const interval = setInterval(() => {
+      this.authService.getUserAfterAuth().then((user) => {
+        this.user = user;
+        if (user !== null) {
+          clearInterval(interval);
+          this.loading = false;
+        }
+      });
+    }, 500);
   }
 
   userLoggedIn(): boolean {

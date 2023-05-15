@@ -259,9 +259,7 @@ export class ShaderEditorComponent implements OnInit, AfterViewInit, CanComponen
       this.oldShaderCode.main != this.shader.main ||
       [...this.oldShaderCode.buffers.values()].length != [...this.shader.buffers.values()].length ||
       [
-        ...Array.of(this.oldShaderCode.buffers.values()).map(
-          (v, i) => Array.of(this.shader.buffers.values())[i] != v
-        ),
+        ...[...this.oldShaderCode.buffers].map(([k, v]) => this.shader.buffers.get(k) != v),
         false,
       ].reduce((a, b) => a || b)
     );

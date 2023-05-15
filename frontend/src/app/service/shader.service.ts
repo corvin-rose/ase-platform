@@ -13,11 +13,11 @@ export class ShaderService {
   constructor(private http: HttpService) {}
 
   public getShaders(): Observable<Shader[]> {
-    return this.http.get<Shader[]>(`${this.apiServerUrl}/shader`);
+    return this.http.get<Shader[]>(`${this.apiServerUrl}/shader`, true);
   }
 
   public getShaderById(id: string): Observable<Shader> {
-    return this.http.get<Shader>(`${this.apiServerUrl}/shader/${id}`);
+    return this.http.get<Shader>(`${this.apiServerUrl}/shader/${id}`, true);
   }
 
   public addShader(shader: Shader): Observable<Shader> {

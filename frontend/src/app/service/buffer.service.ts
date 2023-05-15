@@ -13,7 +13,7 @@ export class BufferService {
   constructor(private http: HttpService) {}
 
   public getAllBuffersWithShaderId(shaderId: string): Observable<Buffer[]> {
-    return this.http.get<Buffer[]>(`${this.apiServerUrl}/buffer/${shaderId}`);
+    return this.http.get<Buffer[]>(`${this.apiServerUrl}/buffer/${shaderId}`, true);
   }
 
   public updateBuffers(buffers: Buffer[]): Observable<boolean> {
