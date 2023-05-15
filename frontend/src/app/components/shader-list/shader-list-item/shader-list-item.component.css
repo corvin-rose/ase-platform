@@ -26,3 +26,7 @@ mat-card-title {
   padding-top: 12px;
   flex-grow: 1;
 }
+.user-link:hover {
+  color: var(--color-primary);
+  cursor: pointer;
+}

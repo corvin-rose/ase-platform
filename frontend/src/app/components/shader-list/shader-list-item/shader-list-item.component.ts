@@ -14,6 +14,7 @@ import { User } from '../../../model/user';
 export class ShaderListItemComponent implements OnInit {
   @Input() title: string = 'Shader';
   @Input() userName: string = 'User';
+  @Input() authorId: string = '';
   @Input() id: string = '';
   @Input() previewImg: string = '';
   @Input() likes: number = 0;

@@ -10,6 +10,7 @@
   </div>
 </div>
 <div class="shader-overview">
-  <h2>My Shaders</h2>
+  <h2 *ngIf="!otherUserProfile">My Shaders</h2>
+  <h2 *ngIf="otherUserProfile">Shaders from {{ getUsername() }}</h2>
   <app-shader-list [userScope]="true" [showSearchbar]="false"></app-shader-list>
 </div>

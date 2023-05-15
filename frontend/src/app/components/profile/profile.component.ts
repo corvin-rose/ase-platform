@@ -1,12 +1,12 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Like } from '../../model/like';
-import { Shader } from '../../model/shader';
 import { User } from '../../model/user';
 import { AuthService } from '../../service/auth.service';
 import { SnackbarService } from '../../service/snackbar.service';
 import { LikeService } from '../../service/like.service';
 import { ShaderService } from '../../service/shader.service';
+import { ActivatedRoute } from '@angular/router';
+import { UserService } from '../../service/user.service';
+import { concatMap, forkJoin, from, of } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -16,36 +16,42 @@ import { ShaderService } from '../../service/shader.service';
 export class ProfileComponent implements OnInit {
   likes: number = 0;
   user: User | null = null;
+  otherUserProfile: boolean = false;
 
   constructor(
     private likeService: LikeService,
     private shaderService: ShaderService,
-    private errorService: SnackbarService,
-    private authService: AuthService
+    private snackbarService: SnackbarService,
+    private authService: AuthService,
+    private userService: UserService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.authService.getUserAfterAuth().then((user) => {
-      this.user = user;
-      this.shaderService.getShaders().subscribe({
-        next: (shaders: Shader[]) => {
-          let userShaders = shaders.filter((v) => v.authorId === this.user?.id).map((v) => v.id);
-          this.likeService.getAllLikes().subscribe({
-            next: (response: Like[]) => {
-              this.likes = response.filter((v) => userShaders.includes(v.shaderId)).length;
-            },
-            error: (error: HttpErrorResponse) => {
-              this.errorService.showError(error);
-              console.error(error.message);
-            },
-          });
+    const userId = this.route.snapshot.params['userId'];
+    this.otherUserProfile = userId !== undefined;
+
+    (userId !== undefined
+      ? this.userService.getUserById(userId)
+      : from(this.authService.getUserAfterAuth())
+    )
+      .pipe(
+        concatMap((user) => {
+          const shader = this.shaderService.getShaders();
+          const likes = this.likeService.getAllLikes();
+          return forkJoin([of(user), shader, likes]);
+        })
+      )
+      .subscribe({
+        next: ([user, shader, likes]) => {
+          this.user = user;
+          const userShaders = shader.filter((v) => v.authorId === user?.id).map((v) => v.id);
+          this.likes = likes.filter((v) => userShaders.includes(v.shaderId)).length;
         },
-        error: (error: HttpErrorResponse) => {
-          this.errorService.showError(error);
-          console.error(error.message);
+        error: (error) => {
+          this.snackbarService.showError(error);
         },
       });
-    });
   }
 
   getUsername(): string {

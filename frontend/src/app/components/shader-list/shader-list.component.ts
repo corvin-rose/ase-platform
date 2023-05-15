@@ -9,7 +9,7 @@ import { LikeService } from '../../service/like.service';
 import { Like } from '../../model/like';
 import { AuthService } from '../../service/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { from, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-shader-list',
@@ -33,7 +33,7 @@ export class ShaderListComponent implements OnInit {
   constructor(
     private shaderService: ShaderService,
     private userService: UserService,
-    private errorService: SnackbarService,
+    private snackbarService: SnackbarService,
     private likeService: LikeService,
     private route: ActivatedRoute,
     private authService: AuthService
@@ -51,15 +51,24 @@ export class ShaderListComponent implements OnInit {
       }
     });
 
-    this.authService.getUserAfterAuth().then((user) => {
-      this.user = user;
-      if (this.userScope) {
-        this.filter = (shader: Shader) => {
-          const userId = user?.id ? user?.id : '-1';
-          return shader.authorId === userId;
-        };
-        this.getShaders();
-      }
+    const userId = this.route.snapshot.params['userId'];
+    (userId !== undefined
+      ? this.userService.getUserById(userId)
+      : from(this.authService.getUserAfterAuth())
+    ).subscribe({
+      next: (user) => {
+        this.user = user;
+        if (this.userScope) {
+          this.filter = (shader: Shader) => {
+            const userId = user?.id ? user?.id : '-1';
+            return shader.authorId === userId;
+          };
+          this.getShaders();
+        }
+      },
+      error: (error) => {
+        this.snackbarService.showError(error);
+      },
     });
 
     if (!this.userScope && this.route.snapshot.params['query'] === undefined) {
@@ -77,7 +86,7 @@ export class ShaderListComponent implements OnInit {
       },
       error: (error: HttpErrorResponse) => {
         this.loading = false;
-        this.errorService.showError(error);
+        this.snackbarService.showError(error);
         console.error(error.message);
       },
     });
@@ -95,7 +104,7 @@ export class ShaderListComponent implements OnInit {
           });
       },
       error: (error: HttpErrorResponse) => {
-        this.errorService.showError(error);
+        this.snackbarService.showError(error);
         console.error(error.message);
       },
     });
@@ -123,7 +132,7 @@ export class ShaderListComponent implements OnInit {
           }, new Map<string, boolean>());
       },
       error: (error: HttpErrorResponse) => {
-        this.errorService.showError(error);
+        this.snackbarService.showError(error);
         console.error(error.message);
       },
     });
@@ -143,6 +152,10 @@ export class ShaderListComponent implements OnInit {
       return author;
     }
     return 'User';
+  }
+
+  getAuthorId(shader: Shader): string {
+    return shader.authorId ?? '';
   }
 
   getPreviewImg(shader: Shader): string {

@@ -12,7 +12,9 @@
     <div class="title-like-wrapper">
       <div class="shader-info">
         <mat-card-title>{{ title }}</mat-card-title>
-        <mat-card-subtitle>{{ userName }}</mat-card-subtitle>
+        <mat-card-subtitle>
+          <span class="user-link" [routerLink]="['profile', authorId]">{{ userName }}</span>
+        </mat-card-subtitle>
       </div>
       <div class="like-btn">
         <span>{{ getLikeCount() }}</span>
