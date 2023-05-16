@@ -1,5 +1,6 @@
 # Angular + Backend .htacces
 
+DirectoryIndex backend/index.php
 DirectorySlash Off
 Options All -Indexes -MultiViews 
 

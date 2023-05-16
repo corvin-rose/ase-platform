@@ -5,6 +5,7 @@ namespace Port\Web\Controller;
 use Core\App\Provider\BaseController;
 use Core\App\Service\AuthService;
 use Core\App\Service\ShaderService;
+use Core\Domain\Model\Routing\ContentType;
 use Core\Domain\Model\Routing\HttpStatus;
 use Core\Domain\Model\Routing\ResponseEntity;
 use Core\Domain\Model\ShaderModel;
@@ -73,5 +74,19 @@ class ShaderController extends BaseController {
             return $this->authService->unauthorized();
         }
         return new ResponseEntity($this->shaderService->deleteShader($id), HttpStatus::OK());
+    }
+
+    /**
+     * @Get /v1/shader/{id}/image
+     */
+    public function getShaderImage(string $id): ResponseEntity {
+        try {
+            $img = $this->shaderService->findShaderById($id)->previewImg;
+        } catch (Exception $e) {
+            $img = "R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+        }
+        $imageData = str_replace("data:image/jpeg;base64,", "", $img);
+        $imageData = base64_decode($imageData);
+        return new ResponseEntity($imageData, HttpStatus::OK(), ContentType::IMAGE_JPEG);
     }
 }
