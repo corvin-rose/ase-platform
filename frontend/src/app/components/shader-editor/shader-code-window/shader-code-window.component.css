@@ -9,7 +9,7 @@
   overflow: hidden;
   border-radius: 5px;
 }
-:host ::ng-deep .editor-container {
+:host ::ng-deep ngx-monaco-editor .editor-container {
   height: 100% !important;
 }
 .editor {
@@ -54,7 +54,12 @@ mat-tab-group {
 }
 @media (max-width: 832px) {
   .editor-container {
-    height: max(calc((var(--line-count) + 1) * 19px), 350px);
+    height: calc((var(--line-count) + 2) * 19px + 48px);
+    margin-bottom: 24px;
+  }
+  :host ::ng-deep .minimap,
+  :host ::ng-deep .decorationsOverviewRuler {
+    display: none !important;
   }
   .mobile-scroll {
     display: block;

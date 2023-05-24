@@ -26,6 +26,7 @@ export class SnackbarService {
       message = DEFAULT_ERROR;
     }
     this.showCustomError(message);
+    console.error(message);
   }
 
   showCustomError(error: string): void {

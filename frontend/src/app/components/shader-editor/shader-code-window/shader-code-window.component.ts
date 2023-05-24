@@ -20,6 +20,7 @@ import { ShaderSource } from '../../../model/shader-source';
 import { forkJoin, map } from 'rxjs';
 import { BufferService } from '../../../service/buffer.service';
 import { MatLegacyTabGroup } from '@angular/material/legacy-tabs';
+import { EditorComponent } from 'ngx-monaco-editor-v2';
 
 @Component({
   selector: 'app-shader-code-window',
@@ -35,16 +36,21 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
   // https://microsoft.github.io/monaco-editor/playground.html#extending-language-services-custom-languages
 
   @ViewChild(MatMenuTrigger, { static: true }) matMenuTrigger: MatMenuTrigger | undefined;
+  @ViewChild(EditorComponent, { static: true }) editor: EditorComponent | undefined;
   menuTopLeftPosition = { x: 0, y: 0 };
 
   @Input() readOnly: boolean = false;
   @Input() loading: boolean = false;
   @Output() codeChanged = new EventEmitter<ShaderSource>();
 
+  isMobile: boolean = document.body.clientWidth < 832;
   editorOptions: any = {
     theme: document.body.classList.contains('dark') ? 'glsl-dark' : 'glsl-light',
     language: 'glsl',
     autoClosingPairs: [{ open: '(', close: ')' }],
+    lineNumbers: this.isMobile ? 'off' : 'on',
+    folding: !this.isMobile,
+    lineDecorationsWidth: 8,
   };
   code: string =
     '// Variables you can use:\n' +
@@ -112,6 +118,7 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
               });
               this.shaderSource = { main: shader.shaderCode, buffers: buffersMap };
               this.updateBufferKeys();
+              this.updateEditorClientHeight();
             }
           })
         )
@@ -120,21 +127,26 @@ export class ShaderCodeWindowComponent implements OnInit, OnDestroy {
           error: (error: HttpErrorResponse) => {
             this.code = '// Shader could not be loaded\n\n' + 'void main() {}';
             this.errorService.showError(error);
-            console.error(error.message);
           },
         });
     }
-    this.elementRef.nativeElement.style.setProperty('--line-count', this.code.split('\n').length);
+    //this.updateEditorClientHeight();
   }
 
   ngModelChanged(_code: string): void {
     this.needsUpdate = true;
     this.lastChange = new Date().getTime();
-    this.elementRef.nativeElement.style.setProperty('--line-count', this.code.split('\n').length);
+    this.updateEditorClientHeight();
   }
 
   ngOnDestroy(): void {
     clearInterval(this.changeInterval);
+  }
+
+  updateEditorClientHeight(): void {
+    const lines = this.code.split('\n').length;
+    this.elementRef.nativeElement.style.setProperty('--line-count', lines);
+    window.dispatchEvent(new Event('resize'));
   }
 
   onTabChanged(event: MatTabChangeEvent): void {

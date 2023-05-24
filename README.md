@@ -3,7 +3,7 @@
 This was a submission for my Web Developement Course at HTW-Berlin. Now I have refactored a lot of things and 
 it became a more stable Version of the application.
 
-Demo here: https://youtu.be/qA3yRjShuEQ
+Demo of the first version here: https://youtu.be/qA3yRjShuEQ
 
 
 ### Project Setup
@@ -24,24 +24,20 @@ Run `ng serve` inside `/ase-platform/frontend`<br>
 
 <br><br>
 
-### General Information
-1. This application still lacks some security measures regarding the users data and their authentication
-2. This application runs with WebGL, therefore some devices may not be able to display the application properly. I have tried to cover all devices as good as possible
+### TODO List:
 
-#### Implemented Features
-* User
-  * Login (POST)
-  * Register (POST)
-  * Profile (GET)
-  * Settings (PUT)
-* Shader
-  * Create (POST)
-  * Edit (PUT)
-  * Render
-  * Delete (DELETE)
-  * Settings (PUT)
-* Like Shaders (GET, POST)
-* Search
+- ase logo
+- sort by modification date
+- restart, fullscreen and fps display
+
+#### Bugs:
+
+- code window scrollable for mobile
+- line number in buffer errors
+- inlay hint 4times or more on tab change -> remove hints and put them into suggestions popup
+- adjust css and remove ng-deep -> @HostBinding() class = 'example-button'
+- replace loading buttons with component and re-enable button on request finish
+- fix expired token error
 
 <br><br>
 

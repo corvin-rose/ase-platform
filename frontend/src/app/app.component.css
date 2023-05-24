@@ -11,9 +11,10 @@ app-search-bar {
   width: min(50%, 700px);
 }
 .logo {
-  font-size: 25px;
+  font-size: 32px;
   font-weight: bold;
   text-decoration: none;
+  line-height: 32px;
   color: var(--color-black);
 }
 
