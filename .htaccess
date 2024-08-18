@@ -20,7 +20,7 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:access_token}]
 </Files>
 
 # Protect env
-<Files env>
+<Files .env>
     Order Allow,Deny
     Deny from all
 </Files>

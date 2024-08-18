@@ -10,6 +10,8 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { ShaderSource } from '../../../model/shader-source';
+import { BufferProgram } from './buffer-program';
+import { Size } from './shader-renderer.model';
 
 @Component({
   selector: 'app-shader-renderer',
@@ -27,13 +29,8 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   time: number = 0;
   frame: number = 0;
   program: any = null;
-  bufferPrograms: {
-    program: WebGLProgram | null;
-    texture: WebGLTexture | null;
-    buffer: WebGLFramebuffer | null;
-    bufferKey: number;
-  }[] = [];
-  size: { x: number; y: number } = { x: 0, y: 0 };
+  bufferPrograms: BufferProgram[] = [];
+  size: Size = { x: 0, y: 0 };
   mousePos: { x: number; y: number } = { x: 0, y: 0 };
   vertexBuffer: WebGLBuffer | null = 0;
   indexBuffer: WebGLBuffer | null = 0;
@@ -153,9 +150,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
     // Delete old buffer programs
     for (const bufferProgram of this.bufferPrograms) {
-      gl.deleteFramebuffer(bufferProgram.buffer);
-      gl.deleteTexture(bufferProgram.texture);
-      gl.deleteProgram(bufferProgram.program);
+      bufferProgram.deleteAllBuffersAndTextures();
     }
     this.bufferPrograms = [];
 
@@ -173,39 +168,10 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
         return;
       }
 
-      const bufferProgram: any = this.createProgram(gl, vertShader, fragShader);
+      const glBufferProgram: any = this.createProgram(gl, vertShader, fragShader);
+      const bufferProgram: BufferProgram = new BufferProgram(gl, this.size, glBufferProgram, key);
 
-      const bufferTexture = gl.createTexture();
-      gl.bindTexture(gl.TEXTURE_2D, bufferTexture);
-      gl.texImage2D(
-        gl.TEXTURE_2D,
-        0,
-        gl.RGBA,
-        this.size.x,
-        this.size.y,
-        0,
-        gl.RGBA,
-        gl.UNSIGNED_BYTE,
-        null
-      );
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-      const buffer = gl.createFramebuffer();
-      gl.bindFramebuffer(gl.FRAMEBUFFER, buffer);
-      gl.framebufferTexture2D(
-        gl.FRAMEBUFFER,
-        gl.COLOR_ATTACHMENT0,
-        gl.TEXTURE_2D,
-        bufferTexture,
-        0
-      );
-
-      this.bufferPrograms.push({
-        program: bufferProgram,
-        texture: bufferTexture,
-        buffer: buffer,
-        bufferKey: key,
-      });
+      this.bufferPrograms.push(bufferProgram);
     }
 
     // Create main program
@@ -220,32 +186,6 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     gl.useProgram(this.program);
     gl.clearColor(0, 0, 0, 1);
     gl.viewport(0, 0, this.size.x, this.size.y);
-
-    this.bufferPrograms.forEach((bufferProgram) => {
-      const bufferLocation = gl.getUniformLocation(
-        this.program,
-        `buffer${bufferProgram.bufferKey}`
-      );
-      switch (bufferProgram.bufferKey) {
-        case 1:
-          gl.uniform1i(bufferLocation, 1);
-          gl.activeTexture(gl.TEXTURE1);
-          break;
-        case 2:
-          gl.uniform1i(bufferLocation, 2);
-          gl.activeTexture(gl.TEXTURE2);
-          break;
-        case 3:
-          gl.uniform1i(bufferLocation, 3);
-          gl.activeTexture(gl.TEXTURE3);
-          break;
-        case 4:
-          gl.uniform1i(bufferLocation, 4);
-          gl.activeTexture(gl.TEXTURE4);
-          break;
-      }
-      gl.bindTexture(gl.TEXTURE_2D, bufferProgram.texture);
-    });
 
     this.sendMessages(['shader compiled!']);
 
@@ -286,7 +226,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
       gl.useProgram(program);
       const resolutionLoc: WebGLUniformLocation | null = gl.getUniformLocation(
         program,
-        'RESOLUTION'
+        'RESOLUTION',
       );
       gl.uniform2f(resolutionLoc, this.size.x, this.size.y);
       const timeLoc: WebGLUniformLocation | null = gl.getUniformLocation(program, 'TIME');
@@ -295,13 +235,36 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
       gl.uniform1i(frameLoc, this.frame);
       const mouseLoc: WebGLUniformLocation | null = gl.getUniformLocation(program, 'MOUSE');
       gl.uniform2f(mouseLoc, this.mousePos.x, this.mousePos.y);
+
+      this.bufferPrograms.forEach((bufferProgram) => {
+        const bufferLocation = gl.getUniformLocation(program, `buffer${bufferProgram.bufferKey}`);
+        switch (bufferProgram.bufferKey) {
+          case 1:
+            gl.uniform1i(bufferLocation, 1);
+            gl.activeTexture(gl.TEXTURE1);
+            break;
+          case 2:
+            gl.uniform1i(bufferLocation, 2);
+            gl.activeTexture(gl.TEXTURE2);
+            break;
+          case 3:
+            gl.uniform1i(bufferLocation, 3);
+            gl.activeTexture(gl.TEXTURE3);
+            break;
+          case 4:
+            gl.uniform1i(bufferLocation, 4);
+            gl.activeTexture(gl.TEXTURE4);
+            break;
+        }
+      });
     }
 
     this.bufferPrograms.forEach((bufferProgram) => {
-      gl.bindFramebuffer(gl.FRAMEBUFFER, bufferProgram.buffer);
+      gl.useProgram(bufferProgram.program);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, bufferProgram.getBufferForNextFrame());
+      gl.bindTexture(gl.TEXTURE_2D, bufferProgram.getTextureForNextFrame());
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
       gl.viewport(0, 0, this.size.x, this.size.y);
-      gl.useProgram(bufferProgram.program);
       gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     });
@@ -319,7 +282,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   createShader(
     gl: WebGL2RenderingContext | WebGLRenderingContext,
     src: string,
-    type: number
+    type: number,
   ): WebGLShader | null {
     let shader: WebGLShader | null = gl.createShader(type);
     if (shader === null) {
@@ -338,7 +301,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
           /(ERROR: [0-9]+:)([0-9]+)/g,
           (_: any, g1: string, g2: string) => {
             return g1 + (parseInt(g2) - this.shaderLineOffset);
-          }
+          },
         ),
       ]);
       console.error(error);
@@ -351,7 +314,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
   createProgram(
     gl: WebGL2RenderingContext | WebGLRenderingContext,
     vShader: WebGLShader,
-    fShader: WebGLShader
+    fShader: WebGLShader,
   ) {
     let prog: WebGLProgram | null = gl.createProgram();
     if (prog === null) {
@@ -382,7 +345,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
       for (let col = 0; col < imageData.width; col++) {
         let sourcePixel = imageData.data.subarray(
           (row * imageData.width + col) * 4,
-          (row * imageData.width + col) * 4 + 4
+          (row * imageData.width + col) * 4 + 4,
         );
         for (let i = 0; i < 4; i++) {
           flipped.data[((imageData.height - row) * flipped.width + col) * 4 + i] = sourcePixel[i];
@@ -396,7 +359,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     this.onMessage.emit(
       message.map((v) => {
         return { content: v, error: false };
-      })
+      }),
     );
   }
 
@@ -404,7 +367,7 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
     this.onMessage.emit(
       message.map((v) => {
         return { content: v, error: true };
-      })
+      }),
     );
   }
 }
