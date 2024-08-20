@@ -16,7 +16,7 @@ class ShaderService {
 
     /** @throws Exception */
     public function findAllShaders(): array {
-        $shaders = $this->dbConnection->runSql("SELECT * FROM ase_shader");
+        $shaders = $this->dbConnection->runSql("SELECT * FROM ase_shader ORDER BY created_at DESC");
         return array_map(fn($v) => ShaderModel::fromDBObject($v), $shaders);
     }
 
