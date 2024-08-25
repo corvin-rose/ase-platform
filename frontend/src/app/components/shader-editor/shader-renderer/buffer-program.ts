@@ -17,23 +17,24 @@ export class BufferProgram {
     program: WebGLProgram | null,
     bufferKey: number,
   ) {
+    this.gl = gl;
+    this.program = program;
+    this.bufferKey = bufferKey;
+
+    const colorAttachment = gl.COLOR_ATTACHMENT0;
     const bufferTexture1 = this.createTexture(gl, size);
     const buffer1 = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, buffer1);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, bufferTexture1, 0);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, colorAttachment, gl.TEXTURE_2D, bufferTexture1, 0);
     this.texture1 = bufferTexture1 as WebGLTexture;
     this.buffer1 = buffer1 as WebGLBuffer;
 
     const bufferTexture2 = this.createTexture(gl, size);
     const buffer2 = gl.createFramebuffer();
     gl.bindFramebuffer(gl.FRAMEBUFFER, buffer2);
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, bufferTexture2, 0);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, colorAttachment, gl.TEXTURE_2D, bufferTexture2, 0);
     this.texture2 = bufferTexture2 as WebGLTexture;
     this.buffer2 = buffer2 as WebGLBuffer;
-
-    this.gl = gl;
-    this.program = program;
-    this.bufferKey = bufferKey;
   }
 
   getTextureForNextFrame(): WebGLTexture {

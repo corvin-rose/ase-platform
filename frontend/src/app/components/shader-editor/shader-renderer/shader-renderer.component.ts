@@ -261,6 +261,9 @@ export class ShaderRendererComponent implements OnInit, OnChanges {
 
     this.bufferPrograms.forEach((bufferProgram) => {
       gl.useProgram(bufferProgram.program);
+      gl.activeTexture(
+        [gl.TEXTURE1, gl.TEXTURE2, gl.TEXTURE3, gl.TEXTURE4][bufferProgram.bufferKey - 1] as number,
+      );
       gl.bindFramebuffer(gl.FRAMEBUFFER, bufferProgram.getBufferForNextFrame());
       gl.bindTexture(gl.TEXTURE_2D, bufferProgram.getTextureForNextFrame());
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
