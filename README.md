@@ -27,13 +27,21 @@ Run `ng serve` inside `/ase-platform/frontend`<br>
 ### TODO List:
 
 - ase logo
-- sort by modification date
+- ~~sort by modification date~~
 - restart, fullscreen and fps display
+- standard colors (red, green, blue, white, ...)
+- resolution switch
+- better intellisense and shortcuts (comment out code)
+- register only with serial number
+- 
 
 #### Bugs:
 
 - code window scrollable for mobile
 - line number in buffer errors
+- thumbnail visible for shaders with buffers
+- code window size freezes on resize
+- when cursor is in tab with more lines than the new one an exception is thrown and the tab freezes
 - inlay hint 4times or more on tab change -> remove hints and put them into suggestions popup
 - adjust css and remove ng-deep -> @HostBinding() class = 'example-button'
 - replace loading buttons with component and re-enable button on request finish
